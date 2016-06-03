@@ -7,29 +7,8 @@ import java.util.List;
  * Created by augustoccesar on 4/29/16.
  */
 public class Condition {
-    public enum Comparisons{
-        EQUALS(" = "),
-        IN(" IN "),
-        IS_NULL(" IS NULL "),
-        IS_NOT_NULL(" IS NOT NULL "),
-        LIKE(" LIKE "),
-        NOT_LIKE(" NOT LIKE "),
-        DIFFERENT(" <> "),
-        GREATER_THAN(" > "),
-        GREATER_THAN_OR_EQUAL(" >= "),
-        LESS_THAN(" < "),
-        LESS_THAN_OR_EQUAL(" <= ");
-
-        private final String value;
-
-        Comparisons(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
+    public static final String AND = "AND";
+    public static final String OR = "OR";
 
     private String field;
     private Comparisons comparison;
@@ -56,6 +35,11 @@ public class Condition {
     // Builder
 
     public static Condition build(String field, Comparisons comparison, Object value){
+        if (value instanceof Comparisons) {
+            if (((Comparisons) value).getValue().equals(Comparisons.VARIABLE.getValue())) {
+                return new Condition(field, comparison, Comparisons.VARIABLE.getValue());
+            }
+        }
         return new Condition(field, comparison, value);
     }
 
