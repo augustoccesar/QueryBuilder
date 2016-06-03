@@ -2,6 +2,40 @@
 
 Simple helper to build queries.
 
+## Classes Constants
+
+### Join.Type
+
+```java
+Join.Type.LEFT_JOIN
+Join.Type.RIGHT_JOIN
+Join.Type.INNER_JOIN
+```
+
+### Comparisons
+
+```java
+Comparisons.EQUALS
+Comparisons.IN
+Comparisons.IS_NULL
+Comparisons.IS_NOT_NULL
+Comparisons.LIKE
+Comparisons.NOT_LIKE
+Comparisons.DIFFERENT
+Comparisons.GREATER_THAN
+Comparisons.GREATER_THAN_OR_EQUAL
+Comparisons.LESS_THAN
+Comparisons.LESS_THAN_OR_EQUAL
+Comparisons.VARIABLE // Used as value of .select() to put '?'
+```
+
+### Order.Type
+
+```java
+Order.Type.ASC
+Order.Type.DESC
+```
+
 ## Methods Usage
 
 ### new QueryBuilder()
