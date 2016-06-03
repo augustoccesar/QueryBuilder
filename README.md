@@ -214,5 +214,5 @@ System.out.println(sql);
 ## Next steps
 
 - `update` methods.
-- Tables cration.
+- Tables creation.
 - Triggers creation.
