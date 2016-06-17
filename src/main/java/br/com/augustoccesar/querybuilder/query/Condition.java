@@ -9,8 +9,8 @@ import java.util.List;
  * Created by augustoccesar on 4/29/16.
  */
 public class Condition {
-    public static final String AND = "AND";
-    public static final String OR = "OR";
+    public static final String AND = " AND ";
+    public static final String OR = " OR ";
 
     private String field;
     private Comparisons comparison;
@@ -59,7 +59,7 @@ public class Condition {
         if(this.nestedConditions == null){
             this.nestedConditions = new ArrayList<>();
         }
-        this.nestedConditions.add(new Condition(" AND ", condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
+        this.nestedConditions.add(new Condition(Condition.AND, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
         return this;
     }
 
@@ -67,7 +67,7 @@ public class Condition {
         if(this.nestedConditions == null){
             this.nestedConditions = new ArrayList<>();
         }
-        this.nestedConditions.add(new Condition(" OR ", condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
+        this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
         return this;
     }
 

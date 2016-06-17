@@ -1,20 +1,19 @@
 package br.com.augustoccesar.querybuilder.query.creation.databases;
 
+import br.com.augustoccesar.querybuilder.builders.TableBuilder;
 import br.com.augustoccesar.querybuilder.query.creation.CreateColumn;
-
-import java.util.List;
 
 /**
  * Created by augustoccesar on 6/13/16.
  */
 public class SqliteCreationBuild {
-    public static String build(String tableName, List<CreateColumn> createColumns) {
+    public static String build(TableBuilder tableBuilder) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("CREATE TABLE ").append(tableName);
+        stringBuilder.append("CREATE TABLE ").append(tableBuilder.getTableName());
         stringBuilder.append(" ( ");
-        for (int i = 0; i < createColumns.size(); i++) {
-            CreateColumn column = createColumns.get(i);
-            if (i == createColumns.size() - 1) {
+        for (int i = 0; i < tableBuilder.getCreateColumns().size(); i++) {
+            CreateColumn column = tableBuilder.getCreateColumns().get(i);
+            if (i == tableBuilder.getCreateColumns().size() - 1) {
                 stringBuilder.append(String.format("%s %s", column.getName(), column.getType().getValue()));
                 if (column.isPrimaryKey())
                     stringBuilder.append(" PRIMARY KEY ");

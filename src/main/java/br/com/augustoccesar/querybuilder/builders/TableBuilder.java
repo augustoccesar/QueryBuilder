@@ -13,26 +13,34 @@ import java.util.List;
 /**
  * Created by augustoccesar on 6/13/16.
  */
-public class CreateTableBuilder implements QueryBuilder {
+public class TableBuilder implements QueryBuilder {
     private String tableName;
     private List<CreateColumn> createColumns;
 
-    public CreateTableBuilder tableName(String tableName) {
+    public TableBuilder tableName(String tableName) {
         this.tableName = tableName;
         return this;
     }
 
-    public CreateTableBuilder columns(CreateColumn... createColumns) {
+    public TableBuilder columns(CreateColumn... createColumns) {
         if (this.createColumns == null)
             this.createColumns = new ArrayList<>();
         Collections.addAll(this.createColumns, createColumns);
         return this;
     }
 
+    public String getTableName() {
+        return tableName;
+    }
+
+    public List<CreateColumn> getCreateColumns() {
+        return createColumns;
+    }
+
     @Override
     public String build() {
-        if (Configuration.getDatabase() == Databases.SQLITE) {
-            return SqliteCreationBuild.build(this.tableName, this.createColumns);
+        if (Configuration.getDatabase().equals(Databases.SQLITE)) {
+            return SqliteCreationBuild.build(this);
         } else {
             return null;
         }

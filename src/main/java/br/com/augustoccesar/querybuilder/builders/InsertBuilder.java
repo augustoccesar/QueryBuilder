@@ -1,6 +1,5 @@
 package br.com.augustoccesar.querybuilder.builders;
 
-import br.com.augustoccesar.querybuilder.exceptions.ColumnWithoutValue;
 import br.com.augustoccesar.querybuilder.helpers.ColumnHelper;
 import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
 import br.com.augustoccesar.querybuilder.query.insertion.InsertColumn;
@@ -75,11 +74,8 @@ public class InsertBuilder implements QueryBuilder {
                     else
                         stringBuilder.append(" ");
                 } else {
-                    try {
-                        throw new ColumnWithoutValue(String.format("Column '%s' doesn't have a value.", insertColumn.getField()));
-                    } catch (ColumnWithoutValue columnWithoutValue) {
-                        columnWithoutValue.printStackTrace();
-                    }
+                    // TODO Exception handlers
+                    return null;
                 }
             }
         }

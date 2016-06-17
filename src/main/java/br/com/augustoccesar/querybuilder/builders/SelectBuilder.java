@@ -121,7 +121,7 @@ public class SelectBuilder implements QueryBuilder {
 
         if (this.conditionBase != null) {
             stringBuilder.append(" WHERE ");
-            runNestedConditions(stringBuilder, conditionBase);
+            ColumnHelper.runNestedConditions(stringBuilder, conditionBase);
         }
 
         if (this.orders != null && this.orders.size() > 0) {
@@ -145,33 +145,5 @@ public class SelectBuilder implements QueryBuilder {
         }
 
         return stringBuilder.toString().trim().replaceAll(" +", " ");
-    }
-
-    private void runNestedConditions(StringBuilder query, Condition initialCondition) {
-        if (initialCondition.getNestedLink() == null) {
-            query.append(initialCondition.getField())
-                    .append(initialCondition.getComparison().getValue())
-                    .append(initialCondition.getValueAsString());
-        }
-
-        if (initialCondition.getNestedConditions() != null && initialCondition.getNestedConditions().size() > 0) {
-            for (Condition condition : initialCondition.getNestedConditions()) {
-                boolean hasNested = condition.getNestedConditions() != null && condition.getNestedConditions().size() > 0;
-
-                query.append(condition.getNestedLink());
-
-                if (hasNested)
-                    query.append(" ( ");
-
-                query.append(condition.getField())
-                        .append(condition.getComparison().getValue())
-                        .append(condition.getValueAsString());
-
-                if (hasNested) {
-                    runNestedConditions(query, condition);
-                    query.append(" ) ");
-                }
-            }
-        }
     }
 }
