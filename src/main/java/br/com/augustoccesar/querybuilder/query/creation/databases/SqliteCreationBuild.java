@@ -13,12 +13,25 @@ public class SqliteCreationBuild {
         stringBuilder.append("CREATE TABLE ").append(tableName);
         stringBuilder.append(" ( ");
         for (int i = 0; i < createColumns.size(); i++) {
-            if (i == createColumns.size() - 1)
-                stringBuilder.append(String.format("%s %s", createColumns.get(i).getName(), createColumns.get(0).getType().getValue()));
-            else
-                stringBuilder
-                        .append(String.format("%s %s", createColumns.get(i).getName(), createColumns.get(0).getType().getValue()))
-                        .append(", ");
+            CreateColumn column = createColumns.get(i);
+            if (i == createColumns.size() - 1) {
+                stringBuilder.append(String.format("%s %s", column.getName(), column.getType().getValue()));
+                if (column.isPrimaryKey())
+                    stringBuilder.append(" PRIMARY KEY ");
+                else if (column.isUnique())
+                    stringBuilder.append(" UNIQUE ");
+                if (!column.isNullable())
+                    stringBuilder.append(" NOT NULL ");
+            } else {
+                stringBuilder.append(String.format("%s %s", column.getName(), column.getType().getValue()));
+                if (column.isPrimaryKey())
+                    stringBuilder.append(" PRIMARY KEY ");
+                else if (column.isUnique())
+                    stringBuilder.append(" UNIQUE ");
+                if (!column.isNullable())
+                    stringBuilder.append(" NOT NULL ");
+                stringBuilder.append(", ");
+            }
         }
         stringBuilder.append(" ) ");
 

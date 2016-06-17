@@ -119,33 +119,9 @@ public class SelectBuilder implements QueryBuilder {
             ListHelpers.runListIterator(stringBuilder, joinStrings.listIterator(), null);
         }
 
-        if(this.conditionBase != null){
+        if (this.conditionBase != null) {
             stringBuilder.append(" WHERE ");
-
-            stringBuilder.append(conditionBase.getField())
-                    .append(conditionBase.getComparison().getValue())
-                    .append(
-                            conditionBase.getValue() instanceof QueryBuilder ? " ( " + ((QueryBuilder) conditionBase.getValue()).build() + " ) " : (
-                                    conditionBase.getValue() == null ? "" : (
-                                            conditionBase.getValue() instanceof String && !conditionBase.getValue().equals("?") ? "\"" + conditionBase.getValue() + "\"" : conditionBase.getValue().toString()
-                                    )
-                            )
-                    );
-
-            if(this.conditionBase.getNestedConditions() != null && this.conditionBase.getNestedConditions().size() > 0){
-                for(Condition condition : this.conditionBase.getNestedConditions()){
-                    stringBuilder.append(condition.getNestedLink())
-                            .append(condition.getField())
-                            .append(condition.getComparison().getValue())
-                            .append(
-                                    condition.getValue() instanceof QueryBuilder ? " ( " + ((QueryBuilder) condition.getValue()).build() + " ) " : (
-                                            condition.getValue() == null ? "" : (
-                                                    condition.getValue().equals("?") ? condition.getValue().toString() : ColumnHelper.checkValueForInsert(condition.getValue())
-                                            )
-                                    )
-                            );
-                }
-            }
+            runNestedConditions(stringBuilder, conditionBase);
         }
 
         if (this.orders != null && this.orders.size() > 0) {
@@ -169,5 +145,33 @@ public class SelectBuilder implements QueryBuilder {
         }
 
         return stringBuilder.toString().trim().replaceAll(" +", " ");
+    }
+
+    private void runNestedConditions(StringBuilder query, Condition initialCondition) {
+        if (initialCondition.getNestedLink() == null) {
+            query.append(initialCondition.getField())
+                    .append(initialCondition.getComparison().getValue())
+                    .append(initialCondition.getValueAsString());
+        }
+
+        if (initialCondition.getNestedConditions() != null && initialCondition.getNestedConditions().size() > 0) {
+            for (Condition condition : initialCondition.getNestedConditions()) {
+                boolean hasNested = condition.getNestedConditions() != null && condition.getNestedConditions().size() > 0;
+
+                query.append(condition.getNestedLink());
+
+                if (hasNested)
+                    query.append(" ( ");
+
+                query.append(condition.getField())
+                        .append(condition.getComparison().getValue())
+                        .append(condition.getValueAsString());
+
+                if (hasNested) {
+                    runNestedConditions(query, condition);
+                    query.append(" ) ");
+                }
+            }
+        }
     }
 }

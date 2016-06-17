@@ -8,6 +8,8 @@ public class CreateColumn {
     private ColumnTypes type;
     private Integer size;
     private boolean primaryKey = false;
+    private boolean unique = false;
+    private boolean nullable = true;
 
     // Constructors
 
@@ -52,7 +54,26 @@ public class CreateColumn {
         return primaryKey;
     }
 
-    public void setPrimaryKey(boolean primaryKey) {
+    public CreateColumn primaryKey(boolean primaryKey) {
         this.primaryKey = primaryKey;
+        return this;
+    }
+
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public CreateColumn unique(boolean unique) {
+        this.unique = unique;
+        return this;
+    }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public CreateColumn nullable(boolean nullable) {
+        this.nullable = nullable;
+        return this;
     }
 }

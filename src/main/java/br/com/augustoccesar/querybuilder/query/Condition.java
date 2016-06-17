@@ -1,5 +1,7 @@
 package br.com.augustoccesar.querybuilder.query;
 
+import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,14 @@ public class Condition {
         this.value = value;
     }
 
+    public Condition(String nestedLink, String field, Comparisons comparison, Object value, List<Condition> nestedConditions) {
+        this.nestedLink = nestedLink;
+        this.field = field;
+        this.comparison = comparison;
+        this.value = value;
+        this.nestedConditions = nestedConditions;
+    }
+
     // Builder
 
     public static Condition build(String field, Comparisons comparison, Object value){
@@ -49,7 +59,7 @@ public class Condition {
         if(this.nestedConditions == null){
             this.nestedConditions = new ArrayList<>();
         }
-        this.nestedConditions.add(new Condition(" AND ", condition.getField(), condition.getComparison(), condition.getValue()));
+        this.nestedConditions.add(new Condition(" AND ", condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
         return this;
     }
 
@@ -57,7 +67,7 @@ public class Condition {
         if(this.nestedConditions == null){
             this.nestedConditions = new ArrayList<>();
         }
-        this.nestedConditions.add(new Condition(" OR ", condition.getField(), condition.getComparison(), condition.getValue()));
+        this.nestedConditions.add(new Condition(" OR ", condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
         return this;
     }
 
@@ -101,5 +111,36 @@ public class Condition {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getValueAsString() {
+        if (value != null) {
+            if (value instanceof String) {
+                if (value.toString().equals("?")) {
+                    return "?";
+                } else {
+                    return "\"" + value + "\"";
+                }
+            } else if (value instanceof List) {
+                String response = "(";
+                List<Object> list = (List<Object>) value;
+                int size = list.size();
+                for (int i = 0; i < size; i++) {
+                    if (i == size - 1)
+                        response += list.get(i).toString();
+                    else
+                        response += list.get(i).toString() + ", ";
+                }
+                response += ")";
+                return response;
+            } else if (value instanceof QueryBuilder) {
+                return " ( " + ((QueryBuilder) value).build() + " ) ";
+            } else {
+                return value.toString();
+            }
+        } else {
+            return "";
+        }
     }
 }
