@@ -5,7 +5,7 @@ package br.com.augustoccesar.querybuilder.query.creation;
  */
 public class CreateColumn {
     private String name;
-    private ColumnTypes type;
+    private ColumnType type;
     private Integer size;
     private boolean primaryKey = false;
     private boolean unique = false;
@@ -13,15 +13,31 @@ public class CreateColumn {
 
     // Constructors
 
-    public CreateColumn(String name, ColumnTypes type) {
+
+    public CreateColumn() {
+    }
+
+    public CreateColumn(String name, ColumnType type) {
         this.name = name;
         this.type = type;
     }
 
-    public CreateColumn(String name, ColumnTypes type, Integer size) {
+    public CreateColumn(String name, ColumnType type, Integer size) {
         this.name = name;
         this.type = type;
         this.size = size;
+    }
+
+    // Methods for readable construction
+
+    public CreateColumn withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public CreateColumn ofType(ColumnType columnType) {
+        this.type = columnType;
+        return this;
     }
 
     // Getters and Setters
@@ -34,11 +50,11 @@ public class CreateColumn {
         this.name = name;
     }
 
-    public ColumnTypes getType() {
+    public ColumnType getType() {
         return type;
     }
 
-    public void setType(ColumnTypes type) {
+    public void setType(ColumnType type) {
         this.type = type;
     }
 

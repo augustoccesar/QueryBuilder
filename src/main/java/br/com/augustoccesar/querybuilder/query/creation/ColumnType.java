@@ -1,19 +1,19 @@
 package br.com.augustoccesar.querybuilder.query.creation;
 
 import br.com.augustoccesar.querybuilder.configurations.Configuration;
-import br.com.augustoccesar.querybuilder.configurations.Databases;
+import br.com.augustoccesar.querybuilder.configurations.Database;
 
 /**
  * Created by augustoccesar on 6/13/16.
  */
-public enum ColumnTypes {
+public enum ColumnType {
     VARCHAR(1),
     INTEGER(2);
 
     private int id;
     private String value;
 
-    ColumnTypes(int id) {
+    ColumnType(int id) {
         this.id = id;
     }
 
@@ -22,7 +22,7 @@ public enum ColumnTypes {
     }
 
     public String getValue() {
-        if (Configuration.getDatabase() == Databases.SQLITE) {
+        if (Configuration.getDatabase() == Database.SQLITE) {
             switch (id) {
                 case 1:
                     return " TEXT ";

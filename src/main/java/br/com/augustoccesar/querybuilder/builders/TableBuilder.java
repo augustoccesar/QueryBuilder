@@ -1,9 +1,10 @@
 package br.com.augustoccesar.querybuilder.builders;
 
 import br.com.augustoccesar.querybuilder.configurations.Configuration;
-import br.com.augustoccesar.querybuilder.configurations.Databases;
+import br.com.augustoccesar.querybuilder.configurations.Database;
 import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
 import br.com.augustoccesar.querybuilder.query.creation.CreateColumn;
+import br.com.augustoccesar.querybuilder.query.creation.ForeignKey;
 import br.com.augustoccesar.querybuilder.query.creation.databases.SqliteCreationBuild;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 public class TableBuilder implements QueryBuilder {
     private String tableName;
     private List<CreateColumn> createColumns;
+    private List<ForeignKey> foreignKeys;
 
     public TableBuilder tableName(String tableName) {
         this.tableName = tableName;
@@ -29,6 +31,13 @@ public class TableBuilder implements QueryBuilder {
         return this;
     }
 
+    public TableBuilder foreignKeys(ForeignKey... foreignKeys) {
+        if (this.foreignKeys == null)
+            this.foreignKeys = new ArrayList<>();
+        Collections.addAll(this.foreignKeys, foreignKeys);
+        return this;
+    }
+
     public String getTableName() {
         return tableName;
     }
@@ -37,9 +46,13 @@ public class TableBuilder implements QueryBuilder {
         return createColumns;
     }
 
+    public List<ForeignKey> getForeignKeys() {
+        return foreignKeys;
+    }
+
     @Override
     public String build() {
-        if (Configuration.getDatabase().equals(Databases.SQLITE)) {
+        if (Configuration.getDatabase().equals(Database.SQLITE)) {
             return SqliteCreationBuild.build(this);
         } else {
             return null;

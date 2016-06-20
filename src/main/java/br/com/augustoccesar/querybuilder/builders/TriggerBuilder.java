@@ -1,7 +1,7 @@
 package br.com.augustoccesar.querybuilder.builders;
 
 import br.com.augustoccesar.querybuilder.configurations.Configuration;
-import br.com.augustoccesar.querybuilder.configurations.Databases;
+import br.com.augustoccesar.querybuilder.configurations.Database;
 import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
 import br.com.augustoccesar.querybuilder.query.trigger.Action;
 import br.com.augustoccesar.querybuilder.query.trigger.Time;
@@ -50,7 +50,7 @@ public class TriggerBuilder implements QueryBuilder {
 
     @Override
     public String build() {
-        if (Configuration.getDatabase().equals(Databases.SQLITE)) {
+        if (Configuration.getDatabase().equals(Database.SQLITE)) {
             return SqliteTriggerBuild.build(this);
         } else {
             return null;

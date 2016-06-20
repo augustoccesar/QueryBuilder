@@ -5,13 +5,13 @@ package br.com.augustoccesar.querybuilder.configurations;
  */
 public class Configuration {
     private static Configuration ourInstance = new Configuration();
-    private Databases database;
+    private Database database;
 
-    public static Databases getDatabase() {
+    public static Database getDatabase() {
         return ourInstance.database;
     }
 
-    public static void setDatabase(Databases database) {
+    public static void setDatabase(Database database) {
         ourInstance.database = database;
     }
 }
