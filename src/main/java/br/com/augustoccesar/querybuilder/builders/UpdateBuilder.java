@@ -24,12 +24,12 @@ public class UpdateBuilder implements QueryBuilder {
         return this;
     }
 
-    public UpdateBuilder conditions(Condition condition) {
+    public UpdateBuilder where(Condition condition) {
         this.conditionBase = condition;
         return this;
     }
 
-    public UpdateBuilder columnsToUpdate(UpdateColumn... updateColumns) {
+    public UpdateBuilder columns(UpdateColumn... updateColumns) {
         if (this.updateColumns == null)
             this.updateColumns = new ArrayList<>();
         Collections.addAll(this.updateColumns, updateColumns);

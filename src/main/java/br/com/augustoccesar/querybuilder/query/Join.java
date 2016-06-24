@@ -8,10 +8,28 @@ public class Join {
     public String tableAndPrefix;
     public String joinOn;
 
+    // Constructors
+
+    public Join(Type type) {
+        this.type = type.getValue();
+    }
+
     public Join(Type type, String tableAndPrefix, String joinOn) {
         this.type = type.getValue();
         this.tableAndPrefix = tableAndPrefix;
         this.joinOn = joinOn;
+    }
+
+    // Readable methods
+
+    public Join table(String tableAndPrefix) {
+        this.tableAndPrefix = tableAndPrefix;
+        return this;
+    }
+
+    public Join on(String joinOn) {
+        this.joinOn = joinOn;
+        return this;
     }
 
     public enum Type {

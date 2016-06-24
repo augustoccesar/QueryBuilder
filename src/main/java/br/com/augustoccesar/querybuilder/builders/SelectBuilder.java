@@ -9,6 +9,7 @@ import br.com.augustoccesar.querybuilder.query.Order;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,16 +63,19 @@ public class SelectBuilder implements QueryBuilder {
         return this;
     }
 
-    public SelectBuilder join(Join.Type type, String tableNameAndPrefix, String joinOn) {
+    public SelectBuilder join(Join join) {
         if(this.joins == null)
             this.joins = new ArrayList<>();
 
-        this.joins.add(new Join(type, tableNameAndPrefix, joinOn));
+        this.joins.add(join);
         return this;
     }
 
-    public SelectBuilder conditions(Condition conditionBase) {
-        this.conditionBase = conditionBase;
+    public SelectBuilder joins(Join... joins) {
+        if (this.joins == null)
+            this.joins = new ArrayList<>();
+
+        Collections.addAll(this.joins, joins);
         return this;
     }
 
@@ -91,6 +95,13 @@ public class SelectBuilder implements QueryBuilder {
 
     public SelectBuilder offset(Long value) {
         this.offset = value;
+        return this;
+    }
+
+    // Readable Methods
+
+    public SelectBuilder where(Condition conditionBase) {
+        this.conditionBase = conditionBase;
         return this;
     }
 

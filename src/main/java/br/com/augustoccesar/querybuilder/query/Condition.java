@@ -21,6 +21,9 @@ public class Condition {
 
     // Constructors
 
+    public Condition() {
+    }
+
     public Condition(String field, Comparisons comparison, Object value) {
         this.field = field;
         this.comparison = comparison;
@@ -42,17 +45,6 @@ public class Condition {
         this.nestedConditions = nestedConditions;
     }
 
-    // Builder
-
-    public static Condition build(String field, Comparisons comparison, Object value){
-        if (value instanceof Comparisons) {
-            if (((Comparisons) value).getValue().equals(Comparisons.VARIABLE.getValue())) {
-                return new Condition(field, comparison, Comparisons.VARIABLE.getValue());
-            }
-        }
-        return new Condition(field, comparison, value);
-    }
-
     // Methods
 
     public Condition and(Condition condition){
@@ -68,6 +60,79 @@ public class Condition {
             this.nestedConditions = new ArrayList<>();
         }
         this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
+        return this;
+    }
+
+    // Readable methods
+
+    public Condition column(String field) {
+        this.field = field;
+        return this;
+    }
+
+    public Condition isEqualsTo(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.EQUALS;
+        return this;
+    }
+
+    public Condition isIn(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.IN;
+        return this;
+    }
+
+    public Condition isNull() {
+        this.value = null;
+        this.comparison = Comparisons.IS_NULL;
+        return this;
+    }
+
+    public Condition isNotNull() {
+        this.value = null;
+        this.comparison = Comparisons.IS_NOT_NULL;
+        return this;
+    }
+
+    public Condition isLike(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.LIKE;
+        return this;
+    }
+
+    public Condition isNotLike(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.NOT_LIKE;
+        return this;
+    }
+
+    public Condition isDifferentThan(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.DIFFERENT;
+        return this;
+    }
+
+    public Condition isGreaterThan(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.GREATER_THAN;
+        return this;
+    }
+
+    public Condition isGreaterThanOrEqualTo(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.GREATER_THAN_OR_EQUAL;
+        return this;
+    }
+
+    public Condition isLessThan(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.LESS_THAN;
+        return this;
+    }
+
+    public Condition isLessThanOrEqualTo(Object value) {
+        this.value = value;
+        this.comparison = Comparisons.LESS_THAN_OR_EQUAL;
         return this;
     }
 

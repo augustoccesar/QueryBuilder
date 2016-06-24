@@ -7,6 +7,11 @@ public class UpdateColumn {
     private String field;
     private Object value;
 
+    // Constructors
+
+    public UpdateColumn() {
+    }
+
     public UpdateColumn(String field) {
         this.field = field;
     }
@@ -16,13 +21,19 @@ public class UpdateColumn {
         this.value = value;
     }
 
-    public static UpdateColumn build(String field) {
-        return new UpdateColumn(field);
+    // Readable methods
+
+    public UpdateColumn column(String column) {
+        this.field = column;
+        return this;
     }
 
-    public static UpdateColumn build(String field, Object value) {
-        return new UpdateColumn(field, value);
+    public UpdateColumn set(Object value) {
+        this.value = value;
+        return this;
     }
+
+    // Getters and Setters
 
     public String getField() {
         return field;

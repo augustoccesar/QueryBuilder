@@ -21,18 +21,19 @@ public class TriggerBuilder implements QueryBuilder {
     private Action action;
     private List<QueryBuilder> queries;
 
-    public TriggerBuilder name(String name) {
+    public TriggerBuilder withName(String name) {
         this.triggerName = name;
         return this;
     }
 
-    public TriggerBuilder tableName(String tableName) {
+    public TriggerBuilder on(String tableName) {
         this.tableName = tableName;
         return this;
     }
 
-    public TriggerBuilder when(Time time) {
+    public TriggerBuilder when(Time time, Action action) {
         this.time = time;
+        this.action = action;
         return this;
     }
 
@@ -41,7 +42,7 @@ public class TriggerBuilder implements QueryBuilder {
         return this;
     }
 
-    public TriggerBuilder queriesToExecute(QueryBuilder queries) {
+    public TriggerBuilder execute(QueryBuilder... queries) {
         if (this.queries == null)
             this.queries = new ArrayList<>();
         Collections.addAll(this.queries, queries);
