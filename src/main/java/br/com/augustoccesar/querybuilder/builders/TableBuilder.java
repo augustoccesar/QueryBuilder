@@ -19,7 +19,7 @@ public class TableBuilder implements QueryBuilder {
     private List<CreateColumn> createColumns;
     private List<ForeignKey> foreignKeys;
 
-    public TableBuilder tableName(String tableName) {
+    public TableBuilder withName(String tableName) {
         this.tableName = tableName;
         return this;
     }

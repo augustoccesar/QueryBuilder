@@ -37,11 +37,6 @@ public class TriggerBuilder implements QueryBuilder {
         return this;
     }
 
-    public TriggerBuilder action(Action action) {
-        this.action = action;
-        return this;
-    }
-
     public TriggerBuilder execute(QueryBuilder... queries) {
         if (this.queries == null)
             this.queries = new ArrayList<>();

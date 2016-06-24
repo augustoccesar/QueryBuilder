@@ -8,7 +8,9 @@ import br.com.augustoccesar.querybuilder.configurations.Database;
  */
 public enum ColumnType {
     VARCHAR(1),
-    INTEGER(2);
+    INTEGER(2),
+    DECIMAL(3),
+    BLOB(4);
 
     private int id;
     private String value;
@@ -28,6 +30,10 @@ public enum ColumnType {
                     return " TEXT ";
                 case 2:
                     return " INTEGER ";
+                case 3:
+                    return " REAL ";
+                case 4:
+                    return " BLOB ";
                 default:
                     return null;
             }

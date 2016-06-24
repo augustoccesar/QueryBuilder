@@ -79,6 +79,11 @@ public class SelectBuilder implements QueryBuilder {
         return this;
     }
 
+    public SelectBuilder where(Condition conditionBase) {
+        this.conditionBase = conditionBase;
+        return this;
+    }
+
     public SelectBuilder order(Order... orders) {
         if (this.orders == null) {
             this.orders = new ArrayList<>();
@@ -95,13 +100,6 @@ public class SelectBuilder implements QueryBuilder {
 
     public SelectBuilder offset(Long value) {
         this.offset = value;
-        return this;
-    }
-
-    // Readable Methods
-
-    public SelectBuilder where(Condition conditionBase) {
-        this.conditionBase = conditionBase;
         return this;
     }
 
