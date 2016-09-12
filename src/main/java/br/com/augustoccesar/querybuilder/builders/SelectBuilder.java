@@ -21,6 +21,7 @@ public class SelectBuilder implements QueryBuilder {
     private List<String> fields;
     private List<Aggregation> aggregations;
     private List<String> tablesAndPrefixes;
+    private List<String> distinctList;
     private List<Join> joins;
     private Long limit;
     private Long offset;
@@ -39,6 +40,15 @@ public class SelectBuilder implements QueryBuilder {
             String newField = this.fields.get(i) + " AS " + ColumnHelper.columnAlias(this.fields.get(i));
             this.fields.set(i, newField);
         }
+
+        return this;
+    }
+
+    public SelectBuilder selectDistinct(String... fields) {
+        if (this.distinctList == null) {
+            this.distinctList = new ArrayList<>();
+        }
+        this.distinctList.addAll(Arrays.asList(fields));
 
         return this;
     }
@@ -125,17 +135,34 @@ public class SelectBuilder implements QueryBuilder {
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
         // TODO remove counts outside aggregation on next versions
+        boolean hasFields = fields != null && fields.size() > 0;
         boolean hasCounts = counts != null && counts.size() > 0;
         boolean hasAggregations = aggregations != null && aggregations.size() > 0;
+        boolean hasDistinct = distinctList != null && distinctList.size() > 0;
 
 
         stringBuilder.append(" SELECT ");
+
+        if (hasDistinct) {
+            for (int i = 0; i < distinctList.size(); i++) {
+                stringBuilder.append(" DISTINCT ");
+                stringBuilder.append(distinctList.get(i));
+                stringBuilder.append(" AS ").append(ColumnHelper.columnAlias(distinctList.get(i)));
+                if (i != distinctList.size() - 1) {
+                    stringBuilder.append(", ");
+                }
+            }
+
+            if (hasCounts || hasAggregations || hasFields) {
+                stringBuilder.append(", ");
+            }
+        }
+
         if (fields != null && fields.size() > 0) {
             ListHelpers.runListIterator(stringBuilder, fields.listIterator(), ",");
             if (hasCounts || hasAggregations)
                 stringBuilder.append(", ");
         }
-
 
         if (hasAggregations) {
             for (int i = 0; i < aggregations.size(); i++) {
