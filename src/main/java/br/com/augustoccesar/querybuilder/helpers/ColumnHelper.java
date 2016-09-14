@@ -11,6 +11,10 @@ public class ColumnHelper {
         return columnSelection.replace(".", "_");
     }
 
+    public static boolean hasTableName(String columnSelection) {
+        return columnSelection.matches("\\w+\\.\\w+");
+    }
+
     public static String checkValueForInsert(Object value) {
         if (value instanceof String) {
             return "\'" + value + "\'";
