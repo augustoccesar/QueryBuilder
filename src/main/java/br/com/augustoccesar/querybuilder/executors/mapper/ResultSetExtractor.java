@@ -18,7 +18,7 @@ public class ResultSetExtractor {
         this.resultSet = resultSet;
     }
 
-    public Object extractClass(String prefix, Class clazz) throws SQLException {
+    public <T> T extractClass(String prefix, Class<T> clazz) throws SQLException {
         Constructor constructor = null;
         for (Constructor ctr : clazz.getDeclaredConstructors()) {
             constructor = ctr;
@@ -31,6 +31,8 @@ public class ResultSetExtractor {
             constructor.setAccessible(true);
             Object response = constructor.newInstance();
 
+            T responseObject = clazz.cast(response);
+
             for (Column column : EntityReader.getColumns(prefix, clazz)) {
                 Field field = response.getClass().getDeclaredField(column.getName());
                 String queryColumn = column.getPrefix() + "_" + StringHelper.camelToSnakeCase(column.getName()); // TODO generic type of alias
@@ -38,12 +40,12 @@ public class ResultSetExtractor {
                 if (checkIfColumnExists(queryColumn, resultSet)) {
                     boolean accessible = field.isAccessible();
                     field.setAccessible(true);
-                    field.set(response, getResultSetByType(column, resultSet));
+                    field.set(responseObject, getResultSetByType(column, resultSet));
                     field.setAccessible(accessible);
                 }
             }
 
-            return response;
+            return responseObject;
 
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
             e.printStackTrace();
@@ -52,8 +54,11 @@ public class ResultSetExtractor {
         return null;
     }
 
-    public Object extractClasses(QueryRelation queryRelation) throws SQLException {
+    public <T> T extractClasses(Class<T> baseClass, QueryRelation queryRelation) throws SQLException {
         Object base = extractClass(queryRelation.getParentClass().getPrefix(), queryRelation.getParentClass().getClazz());
+
+        T baseResponse = baseClass.cast(base);
+
         for (String key : queryRelation.getIncludes().keySet()) {
             ClassTable classTable = queryRelation.getIncludes().get(key);
             Object includeObj = extractClass(classTable.getPrefix(), classTable.getClazz());
@@ -62,14 +67,14 @@ public class ResultSetExtractor {
                 Field field = base.getClass().getDeclaredField(key);
                 boolean accessible = field.isAccessible();
                 field.setAccessible(true);
-                field.set(base, includeObj);
+                field.set(baseResponse, includeObj);
                 field.setAccessible(accessible);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
 
-        return base;
+        return baseResponse;
     }
 
     public Object getResultSetByType(Column column, ResultSet rs) throws SQLException {

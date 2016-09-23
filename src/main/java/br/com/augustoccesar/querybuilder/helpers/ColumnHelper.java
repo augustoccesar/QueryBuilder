@@ -11,6 +11,10 @@ public class ColumnHelper {
         return columnSelection.replace(".", "_");
     }
 
+    public static boolean isAll(String columnSelection) {
+        return columnSelection.contains("*");
+    }
+
     public static boolean hasTableName(String columnSelection) {
         return columnSelection.matches("\\w+\\.\\w+");
     }

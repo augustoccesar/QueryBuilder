@@ -37,7 +37,7 @@ public class SelectBuilder implements QueryBuilder {
         this.fields.addAll(Arrays.asList(fields));
 
         for (int i = 0; i < this.fields.size(); i++) {
-            if (ColumnHelper.hasTableName(this.fields.get(i))) {
+            if (ColumnHelper.hasTableName(this.fields.get(i)) && !ColumnHelper.isAll(this.fields.get(i))) {
                 String newField = this.fields.get(i) + " AS " + ColumnHelper.columnAlias(this.fields.get(i));
                 this.fields.set(i, newField);
             }
