@@ -146,8 +146,8 @@ public class SelectBuilder implements QueryBuilder {
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
-        // TODO remove counts outside aggregation on next versions
         boolean hasFields = fields != null && fields.size() > 0;
+        // TODO remove counts outside aggregation on next versions
         boolean hasCounts = counts != null && counts.size() > 0;
         boolean hasAggregations = aggregations != null && aggregations.size() > 0;
         boolean hasDistinct = distinctList != null && distinctList.size() > 0;
@@ -184,6 +184,10 @@ public class SelectBuilder implements QueryBuilder {
 
                 if (function.getAlias() != null) {
                     stringBuilder.append(" AS ").append(function.getAlias());
+                }
+
+                if (i != functions.size() - 1) {
+                    stringBuilder.append(", ");
                 }
             }
 
