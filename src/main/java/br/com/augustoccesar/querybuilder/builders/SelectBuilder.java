@@ -138,7 +138,7 @@ public class SelectBuilder implements QueryBuilder {
     }
 
     /**
-     * Method for adding multiple joins to the query. Similar to #{@link br.com.augustoccesar.querybuilder.builders.SelectBuilder#join(Join)} but with a list of Join objects.
+     * Method for adding multiple joins to the query. Similar to #{@link #join(Join)} but with a list of Join objects.
      * @param joins Array of Join objects.
      * @return This instance of SelectBuilder.
      */
