@@ -1,4 +1,4 @@
-package br.com.augustoccesar.querybuilder.executors.mapper;
+package br.com.augustoccesar.querybuilder.query;
 
 /**
  * Created by augustoccesar on 8/9/16.
@@ -9,11 +9,36 @@ public class Column {
     private String name;
     private String prefix;
 
+    // Builders
+
+    public Column(String name) {
+        this.name = name;
+    }
+
+    public Column(String prefix, String name) {
+        this.prefix = prefix;
+        this.name = name;
+    }
+
     public Column(Class clazz, Class type, String prefix, String name) {
         this.clazz = clazz;
         this.type = type;
         this.name = name;
         this.prefix = prefix;
+    }
+
+    // Constructors
+
+    public static Column build(String name) {
+        return new Column(name);
+    }
+
+    public static Column build(String prefix, String name) {
+        return new Column(prefix, name);
+    }
+
+    public static Column build(Class clazz, Class type, String prefix, String name) {
+        return new Column(clazz, type, prefix, name);
     }
 
     public Class getClazz() {

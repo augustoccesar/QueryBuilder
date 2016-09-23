@@ -1,6 +1,7 @@
 package br.com.augustoccesar.querybuilder.executors.mapper;
 
 import br.com.augustoccesar.querybuilder.helpers.StringHelper;
+import br.com.augustoccesar.querybuilder.query.Column;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

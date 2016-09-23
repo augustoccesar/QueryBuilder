@@ -119,6 +119,14 @@ Start building the select.
 .offset(Long.valueOf(20))
 ```
 
+### .withAlias(boolean flag)
+Method used to define if want the QueryBuilder to automatically generate an alias to the columns following the pattern: `u.id becomes u.id AS u_id`
+```
+.withAlias(true)
+
+.withAlias(false)
+```
+
 ### .build()
 Generate the select String.
 

@@ -4,6 +4,7 @@ import br.com.augustoccesar.querybuilder.helpers.ColumnHelper;
 import br.com.augustoccesar.querybuilder.helpers.ListHelpers;
 import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
 import br.com.augustoccesar.querybuilder.query.Condition;
+import br.com.augustoccesar.querybuilder.query.Function;
 import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.Order;
 import br.com.augustoccesar.querybuilder.query.aggregation.Aggregation;
@@ -20,6 +21,7 @@ public class SelectBuilder implements QueryBuilder {
 
     private List<String> fields;
     private List<Aggregation> aggregations;
+    private List<Function> functions;
     private List<String> tablesAndPrefixes;
     private List<String> distinctList;
     private List<Join> joins;
@@ -29,19 +31,13 @@ public class SelectBuilder implements QueryBuilder {
     private Condition conditionBase;
     private List<Order> orders;
     private String groupBy;
+    private boolean withAlias = true;
 
     public SelectBuilder select(String... fields) {
         if (this.fields == null) {
             this.fields = new ArrayList<>();
         }
         this.fields.addAll(Arrays.asList(fields));
-
-        for (int i = 0; i < this.fields.size(); i++) {
-            if (ColumnHelper.hasTableName(this.fields.get(i)) && !ColumnHelper.isAll(this.fields.get(i))) {
-                String newField = this.fields.get(i) + " AS " + ColumnHelper.columnAlias(this.fields.get(i));
-                this.fields.set(i, newField);
-            }
-        }
 
         return this;
     }
@@ -55,11 +51,20 @@ public class SelectBuilder implements QueryBuilder {
         return this;
     }
 
-    public SelectBuilder selectAggregation(Aggregation... aggregations) {
+    public SelectBuilder selectAggregations(Aggregation... aggregations) {
         if (this.aggregations == null) {
             this.aggregations = new ArrayList<>();
         }
         this.aggregations.addAll(Arrays.asList(aggregations));
+
+        return this;
+    }
+
+    public SelectBuilder selectFunctions(Function... functions) {
+        if (this.functions == null) {
+            this.functions = new ArrayList<>();
+        }
+        this.functions.addAll(Arrays.asList(functions));
 
         return this;
     }
@@ -133,6 +138,11 @@ public class SelectBuilder implements QueryBuilder {
         return this;
     }
 
+    public SelectBuilder withAlias(boolean flag) {
+        this.withAlias = flag;
+        return this;
+    }
+
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -141,9 +151,46 @@ public class SelectBuilder implements QueryBuilder {
         boolean hasCounts = counts != null && counts.size() > 0;
         boolean hasAggregations = aggregations != null && aggregations.size() > 0;
         boolean hasDistinct = distinctList != null && distinctList.size() > 0;
+        boolean hasFunctions = functions != null && functions.size() > 0;
 
+        if (hasFields) {
+            for (int i = 0; i < this.fields.size(); i++) {
+                if (ColumnHelper.hasTableName(this.fields.get(i)) &&
+                        !ColumnHelper.isAll(this.fields.get(i)) &&
+                        this.withAlias) {
+                    String newField = this.fields.get(i) + " AS " + ColumnHelper.columnAlias(this.fields.get(i));
+                    this.fields.set(i, newField);
+                }
+            }
+        }
 
         stringBuilder.append(" SELECT ");
+
+        if (hasFunctions) {
+            for (int i = 0; i < functions.size(); i++) {
+                Function function = functions.get(i);
+
+                stringBuilder.append(function.getName());
+                if (function.getParameters() != null && function.getParameters().getParametersList().size() > 0) {
+                    stringBuilder.append(" ( ");
+                    for (int j = 0; j < function.getParameters().getParametersList().size(); j++) {
+                        String parameter = function.getParameters().getParametersList().get(j);
+                        stringBuilder.append(parameter);
+                        if (j != function.getParameters().getParametersList().size() - 1)
+                            stringBuilder.append(", ");
+                    }
+                    stringBuilder.append(" ) ");
+                }
+
+                if (function.getAlias() != null) {
+                    stringBuilder.append(" AS ").append(function.getAlias());
+                }
+            }
+
+            if (hasCounts || hasFields || hasAggregations || hasDistinct) {
+                stringBuilder.append(", ");
+            }
+        }
 
         if (hasDistinct) {
             for (int i = 0; i < distinctList.size(); i++) {
@@ -160,7 +207,7 @@ public class SelectBuilder implements QueryBuilder {
             }
         }
 
-        if (fields != null && fields.size() > 0) {
+        if (hasFields) {
             ListHelpers.runListIterator(stringBuilder, fields.listIterator(), ",");
             if (hasCounts || hasAggregations)
                 stringBuilder.append(", ");

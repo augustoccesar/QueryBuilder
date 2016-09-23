@@ -19,10 +19,12 @@ public class Condition {
 
     private List<Condition> nestedConditions;
 
-    // Constructors
+    // Build for old versions compatibility
 
     public Condition() {
     }
+
+    // Constructors
 
     public Condition(String field, Comparisons comparison, Object value) {
         this.field = field;
@@ -43,6 +45,10 @@ public class Condition {
         this.comparison = comparison;
         this.value = value;
         this.nestedConditions = nestedConditions;
+    }
+
+    public static Condition build(String field, Comparisons comparison, Object value) {
+        return new Condition(field, comparison, value);
     }
 
     // Methods
@@ -201,6 +207,8 @@ public class Condition {
                 return response;
             } else if (value instanceof QueryBuilder) {
                 return " ( " + ((QueryBuilder) value).build() + " ) ";
+            } else if (value instanceof Column) {
+                return ((Column) value).getName();
             } else {
                 return value.toString();
             }
