@@ -9,7 +9,7 @@ public class Column {
     private String name;
     private String prefix;
 
-    // Builders
+    // Constructors
 
     public Column(String name) {
         this.name = name;
@@ -27,7 +27,7 @@ public class Column {
         this.prefix = prefix;
     }
 
-    // Constructors
+    // Builders
 
     public static Column build(String name) {
         return new Column(name);
@@ -40,6 +40,8 @@ public class Column {
     public static Column build(Class clazz, Class type, String prefix, String name) {
         return new Column(clazz, type, prefix, name);
     }
+
+    // Getters and Setters
 
     public Class getClazz() {
         return clazz;

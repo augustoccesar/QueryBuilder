@@ -13,10 +13,19 @@ import java.util.ListIterator;
  * Created by augustoccesar on 6/13/16.
  */
 public class InsertBuilder implements QueryBuilder {
+    /**
+     * Attributes
+     */
     private List<InsertColumn> insertColumns;
     private String insertTableName;
     private boolean withValues = false;
 
+    /**
+     * Method for building the INSERT clause with the columns to be inserted.
+     *
+     * @param insertColumns Columns to be inserted
+     * @return This instance of InsertBuilder.
+     */
     public InsertBuilder insert(InsertColumn... insertColumns) {
         if (this.insertColumns == null)
             this.insertColumns = new ArrayList<>();
@@ -24,16 +33,29 @@ public class InsertBuilder implements QueryBuilder {
         return this;
     }
 
+    /**
+     * Method for defining the table that the data will be inserted.
+     * @param tableName Name of the table.
+     * @return This instance of InsertBuilder.
+     */
     public InsertBuilder into(String tableName) {
         this.insertTableName = tableName;
         return this;
     }
 
+    /**
+     * Method for defining if the insertion will contain the values or '?'
+     * @return This instance of InsertBuilder.
+     */
     public InsertBuilder withValues() {
         this.withValues = true;
         return this;
     }
 
+    /**
+     * Method for generating the SQL statement.
+     * @return SQL Statement String.
+     */
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();

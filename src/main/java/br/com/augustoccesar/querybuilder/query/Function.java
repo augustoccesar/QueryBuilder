@@ -11,11 +11,11 @@ public class Function {
     private String alias;
     private Parameters parameters;
 
+    // Constructors
+
     public Function(String name) {
         this.name = name;
     }
-
-    // Constructors
 
     public Function(String name, String alias) {
         this.name = name;
@@ -33,11 +33,11 @@ public class Function {
         this.parameters = parameters;
     }
 
+    // Builders
+
     public static Function build(String name) {
         return new Function(name);
     }
-
-    // Builders
 
     public static Function build(String name, String alias) {
         return new Function(name, alias);
@@ -51,11 +51,11 @@ public class Function {
         return new Function(name, alias, parameters);
     }
 
+    // Getters and Setters
+
     public String getName() {
         return name;
     }
-
-    // Getters and Setters
 
     public void setName(String name) {
         this.name = name;

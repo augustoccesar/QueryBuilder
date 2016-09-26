@@ -8,7 +8,7 @@ public class Join {
     public String tableAndPrefix;
     public String joinOn;
 
-    // Builders
+    // Constructors
 
     public Join(Type type) {
         this.type = type.getValue();
@@ -20,7 +20,7 @@ public class Join {
         this.joinOn = joinOn;
     }
 
-    // Constructors
+    // Builders
 
     public static Join build(Type type) {
         return new Join(type);
