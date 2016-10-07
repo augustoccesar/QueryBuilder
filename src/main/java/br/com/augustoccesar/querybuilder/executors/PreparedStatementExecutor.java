@@ -24,4 +24,19 @@ public class PreparedStatementExecutor {
             e.printStackTrace();
         }
     }
+
+    public static void execute(Connection con, String sql, Callback callback) {
+        try {
+            con.setReadOnly(true);
+            try (PreparedStatement stmt = con.prepareStatement(sql)) {
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    callback.execute(rs);
+                }
+            }
+            con.setReadOnly(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

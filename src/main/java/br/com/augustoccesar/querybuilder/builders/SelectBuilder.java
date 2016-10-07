@@ -3,10 +3,7 @@ package br.com.augustoccesar.querybuilder.builders;
 import br.com.augustoccesar.querybuilder.helpers.ColumnHelper;
 import br.com.augustoccesar.querybuilder.helpers.ListHelpers;
 import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
-import br.com.augustoccesar.querybuilder.query.Condition;
-import br.com.augustoccesar.querybuilder.query.Function;
-import br.com.augustoccesar.querybuilder.query.Join;
-import br.com.augustoccesar.querybuilder.query.Order;
+import br.com.augustoccesar.querybuilder.query.*;
 import br.com.augustoccesar.querybuilder.query.aggregation.Aggregation;
 
 import java.util.ArrayList;
@@ -41,6 +38,7 @@ public class SelectBuilder implements QueryBuilder {
      * Attributes
      */
     private List<String> fields;
+    private List<UnionAll> unionAllFrom;
     private List<Aggregation> aggregations;
     private List<Function> functions;
     private List<String> tablesAndPrefixes;
@@ -53,23 +51,33 @@ public class SelectBuilder implements QueryBuilder {
     private String groupBy;
     private boolean withAlias = true;
 
+    public static UnionAll unionAll(String alias, SelectBuilder... selectBuilders) {
+        return new UnionAll(alias, selectBuilders);
+    }
+
     /**
      * Method for building the list of fields that are going to be queried.
      *
      * @param fields List of the fields, with or without the table alias.
      * @return This instance of SelectBuilder.
      */
-    public SelectBuilder select(String... fields) {
-        if (this.fields == null) {
-            this.fields = new ArrayList<>();
-        }
-        this.fields.addAll(Arrays.asList(fields));
+    public SelectBuilder select(Object... fields) {
+        Arrays.asList(fields).forEach((field) -> {
+            if (field instanceof String) {
+                if (this.fields == null) {
+                    this.fields = new ArrayList<>();
+                }
+
+                this.fields.add(field.toString());
+            }
+        });
 
         return this;
     }
 
     /**
      * Method for building the list of distinct fields that are going to be queried.
+     *
      * @param fields List of the fields that are going to be DISTINCT
      * @return This instance of SelectBuilder.
      */
@@ -84,6 +92,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the list of aggregations that are going to be queried. Examples: SUM, COUNT, etc
+     *
      * @param aggregations List of the aggregations.
      * @return This instance of SelectBuilder.
      */
@@ -98,6 +107,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the list of functions that are going to be queried on the SELECT clause.
+     *
      * @param functions List of the functions.
      * @return This instance of SelectBuilder.
      */
@@ -112,20 +122,33 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the FROM clause.
+     *
      * @param tableNameAndPrefix List of the tables (with or without alias) that are going to be used on the query.
      * @return This instance of SelectBuilder.
      */
-    public SelectBuilder from(String... tableNameAndPrefix) {
-        if (this.tablesAndPrefixes == null) {
-            this.tablesAndPrefixes = new ArrayList<>();
-        }
+    public SelectBuilder from(Object... tableNameAndPrefix) {
+        Arrays.asList(tableNameAndPrefix).forEach((field) -> {
+            if (field instanceof String) {
+                if (this.tablesAndPrefixes == null) {
+                    this.tablesAndPrefixes = new ArrayList<>();
+                }
 
-        this.tablesAndPrefixes.addAll(Arrays.asList(tableNameAndPrefix));
+                this.tablesAndPrefixes.add(field.toString());
+            } else if (field instanceof UnionAll) {
+                if (this.unionAllFrom == null) {
+                    this.unionAllFrom = new ArrayList<>();
+                }
+
+                this.unionAllFrom.add((UnionAll) field);
+            }
+        });
+
         return this;
     }
 
     /**
      * Method for adding a join to the query.
+     *
      * @param join Join object instance.
      * @return This instance of SelectBuilder.
      */
@@ -139,6 +162,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for adding multiple joins to the query. Similar to #{@link #join(Join)} but with a list of Join objects.
+     *
      * @param joins Array of Join objects.
      * @return This instance of SelectBuilder.
      */
@@ -152,6 +176,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the WHERE clause.
+     *
      * @param conditionBase Instance of the base Condition Object.
      * @return This instance of SelectBuilder.
      */
@@ -162,6 +187,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the ORDER clause.
+     *
      * @param orders Array of Order objects.
      * @return This instance of SelectBuilder.
      */
@@ -176,6 +202,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the GROUP BY clause.
+     *
      * @param groupBy String value of the column to be grouped by.
      * @return This instance of SelectBuilder.
      */
@@ -186,6 +213,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building the LIMIT clause.
+     *
      * @param value Value of the limit.
      * @return This instance of SelectBuilder.
      */
@@ -196,6 +224,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for building OFFSET clause.
+     *
      * @param value Value of the offset.
      * @return This instance of SelectBuilder.
      */
@@ -206,6 +235,7 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for defining if want the SelectBuilder to build the query with alias on the columns.
+     *
      * @param flag Value of the flag.
      * @return This instance of SelectBuilder.
      */
@@ -216,12 +246,15 @@ public class SelectBuilder implements QueryBuilder {
 
     /**
      * Method for generating the SQL statement.
+     *
      * @return SQL Statement String.
      */
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
+
         boolean hasFields = fields != null && fields.size() > 0;
+        boolean hasUnionAllFrom = unionAllFrom != null && unionAllFrom.size() > 0;
         boolean hasAggregations = aggregations != null && aggregations.size() > 0;
         boolean hasDistinct = distinctList != null && distinctList.size() > 0;
         boolean hasFunctions = functions != null && functions.size() > 0;
@@ -306,7 +339,25 @@ public class SelectBuilder implements QueryBuilder {
         }
 
         stringBuilder.append(STRING_FROM);
-        ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
+        if (tablesAndPrefixes != null) {
+            ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
+            stringBuilder.append(STRING_COMMA);
+        }
+
+        if (hasUnionAllFrom) {
+            for (UnionAll unionAll : unionAllFrom) {
+                stringBuilder.append(" ( ");
+                for (int j = 0; j < unionAll.getSelectBuilderList().size(); j++) {
+                    stringBuilder.append(" ( ");
+                    SelectBuilder selectBuilder = unionAll.getSelectBuilderList().get(j);
+                    stringBuilder.append(selectBuilder.build());
+                    stringBuilder.append(" ) ");
+                    if (j < unionAll.getSelectBuilderList().size() - 1)
+                        stringBuilder.append(" UNION ALL ");
+                }
+                stringBuilder.append(" ) as ").append(unionAll.getAlias());
+            }
+        }
 
         if (joins != null && joins.size() > 0) {
             List<String> joinStrings = new ArrayList<>();
