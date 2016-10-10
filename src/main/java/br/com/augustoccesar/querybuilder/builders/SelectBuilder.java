@@ -396,6 +396,9 @@ public class SelectBuilder implements QueryBuilder {
                     SelectBuilder selectBuilder = unionAll.getSelectBuilderList().get(j);
                     stringBuilder.append(selectBuilder.build());
                     stringBuilder.append(" ) ");
+                    if (selectBuilder.getAlias() != null) {
+                        stringBuilder.append(" AS ").append(selectBuilder.getAlias());
+                    }
                     if (j < unionAll.getSelectBuilderList().size() - 1)
                         stringBuilder.append(" UNION ALL ");
                 }
