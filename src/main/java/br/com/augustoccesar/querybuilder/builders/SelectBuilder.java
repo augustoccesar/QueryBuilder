@@ -341,10 +341,10 @@ public class SelectBuilder implements QueryBuilder {
         stringBuilder.append(STRING_FROM);
         if (tablesAndPrefixes != null) {
             ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
-            stringBuilder.append(STRING_COMMA);
         }
 
         if (hasUnionAllFrom) {
+            stringBuilder.append(STRING_COMMA);
             for (UnionAll unionAll : unionAllFrom) {
                 stringBuilder.append(" ( ");
                 for (int j = 0; j < unionAll.getSelectBuilderList().size(); j++) {
