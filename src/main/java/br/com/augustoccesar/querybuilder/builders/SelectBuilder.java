@@ -37,11 +37,13 @@ public class SelectBuilder implements QueryBuilder {
     /**
      * Attributes
      */
+    private String alias;
     private List<String> fields;
     private List<UnionAll> unionAllFrom;
     private List<Aggregation> aggregations;
     private List<Function> functions;
     private List<String> tablesAndPrefixes;
+    private List<SelectBuilder> fromSelectBuilders;
     private List<String> distinctList;
     private List<Join> joins;
     private Long limit;
@@ -51,8 +53,26 @@ public class SelectBuilder implements QueryBuilder {
     private String groupBy;
     private boolean withAlias = true;
 
+    /**
+     * Method for creating an UnionAll statement on the SelectBuilder.
+     *
+     * @param alias          Alias to the UNION ALL clause.
+     * @param selectBuilders List of the SelectBuilders that are going to be in the UNION ALL clause.
+     * @return An instance of the UnionAll class.
+     */
     public static UnionAll unionAll(String alias, SelectBuilder... selectBuilders) {
         return new UnionAll(alias, selectBuilders);
+    }
+
+    /**
+     * Method for setting an alias to the SelectBuilder.
+     *
+     * @param alias Alias to the SelectBuilder.
+     * @return This instance of SelectBuilder.
+     */
+    public SelectBuilder alias(String alias) {
+        this.alias = alias;
+        return this;
     }
 
     /**
@@ -140,6 +160,12 @@ public class SelectBuilder implements QueryBuilder {
                 }
 
                 this.unionAllFrom.add((UnionAll) field);
+            } else if (field instanceof SelectBuilder) {
+                if (this.fromSelectBuilders == null) {
+                    this.fromSelectBuilders = new ArrayList<>();
+                }
+
+                this.fromSelectBuilders.add((SelectBuilder) field);
             }
         });
 
@@ -255,6 +281,7 @@ public class SelectBuilder implements QueryBuilder {
 
         boolean hasFields = fields != null && fields.size() > 0;
         boolean hasUnionAllFrom = unionAllFrom != null && unionAllFrom.size() > 0;
+        boolean hasFromSelectBuilders = fromSelectBuilders != null && fromSelectBuilders.size() > 0;
         boolean hasAggregations = aggregations != null && aggregations.size() > 0;
         boolean hasDistinct = distinctList != null && distinctList.size() > 0;
         boolean hasFunctions = functions != null && functions.size() > 0;
@@ -341,6 +368,21 @@ public class SelectBuilder implements QueryBuilder {
         stringBuilder.append(STRING_FROM);
         if (tablesAndPrefixes != null) {
             ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
+            if (hasUnionAllFrom || hasFromSelectBuilders) {
+                stringBuilder.append(STRING_COMMA);
+            }
+        }
+
+        if (hasFromSelectBuilders) {
+            for (SelectBuilder selectBuilder : fromSelectBuilders) {
+                stringBuilder.append(" ( ");
+                stringBuilder.append(selectBuilder.build());
+                stringBuilder.append(" ) ");
+                if (selectBuilder.getAlias() != null) {
+                    stringBuilder.append(" AS ").append(selectBuilder.getAlias());
+                }
+            }
+
             if (hasUnionAllFrom) {
                 stringBuilder.append(STRING_COMMA);
             }
@@ -399,5 +441,12 @@ public class SelectBuilder implements QueryBuilder {
         }
 
         return stringBuilder.toString().trim().replaceAll(" +", STRING_SPACE);
+    }
+
+    // Getters and Setters
+
+
+    public String getAlias() {
+        return alias;
     }
 }
