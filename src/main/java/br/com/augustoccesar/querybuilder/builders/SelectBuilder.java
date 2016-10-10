@@ -327,9 +327,9 @@ public class SelectBuilder implements QueryBuilder {
             for (int i = 0; i < aggregations.size(); i++) {
                 Aggregation aggregation = aggregations.get(i);
 
-                stringBuilder.append(aggregation.getAggregationType().getCommand()).append(STRING_OPEN_PARENTHESES);
+                stringBuilder.append(aggregation.getAggregationType().getCommand()).append(STRING_OPEN_PARENTHESES.trim());
                 stringBuilder.append(aggregation.getColumnName());
-                stringBuilder.append(STRING_CLOSE_PARENTHESES).append(STRING_AS);
+                stringBuilder.append(STRING_CLOSE_PARENTHESES.trim()).append(STRING_AS);
                 stringBuilder.append(aggregation.getAggregationType().getCommand().toLowerCase()).append(STRING_UNDERLINE).append(ColumnHelper.columnAlias(aggregation.getColumnName()));
 
                 if (i != aggregations.size() - 1) {
@@ -341,10 +341,12 @@ public class SelectBuilder implements QueryBuilder {
         stringBuilder.append(STRING_FROM);
         if (tablesAndPrefixes != null) {
             ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
+            if (hasUnionAllFrom) {
+                stringBuilder.append(STRING_COMMA);
+            }
         }
 
         if (hasUnionAllFrom) {
-            stringBuilder.append(STRING_COMMA);
             for (UnionAll unionAll : unionAllFrom) {
                 stringBuilder.append(" ( ");
                 for (int j = 0; j < unionAll.getSelectBuilderList().size(); j++) {
