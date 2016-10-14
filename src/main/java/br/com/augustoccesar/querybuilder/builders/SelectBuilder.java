@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by augustoccesar on 6/13/16.
@@ -305,14 +306,14 @@ public class SelectBuilder implements QueryBuilder {
 
                 stringBuilder.append(function.getName());
                 if (function.getParameters() != null && function.getParameters().getParametersList().size() > 0) {
-                    stringBuilder.append(STRING_OPEN_PARENTHESES);
+                    stringBuilder.append(STRING_OPEN_PARENTHESES.trim());
                     for (int j = 0; j < function.getParameters().getParametersList().size(); j++) {
                         String parameter = function.getParameters().getParametersList().get(j);
                         stringBuilder.append(parameter);
                         if (j != function.getParameters().getParametersList().size() - 1)
                             stringBuilder.append(STRING_COMMA);
                     }
-                    stringBuilder.append(STRING_CLOSE_PARENTHESES);
+                    stringBuilder.append(STRING_CLOSE_PARENTHESES.trim()).append(STRING_SPACE);
                 }
 
                 if (function.getAlias() != null) {
@@ -407,10 +408,7 @@ public class SelectBuilder implements QueryBuilder {
         }
 
         if (joins != null && joins.size() > 0) {
-            List<String> joinStrings = new ArrayList<>();
-            for (Join join : joins) {
-                joinStrings.add(join.type + " " + join.tableAndPrefix + STRING_ON + join.joinOn);
-            }
+            List<String> joinStrings = joins.stream().map(join -> join.type + " " + join.tableAndPrefix + STRING_ON + join.joinOn).collect(Collectors.toList());
             ListHelpers.runListIterator(stringBuilder, joinStrings.listIterator(), null);
         }
 
