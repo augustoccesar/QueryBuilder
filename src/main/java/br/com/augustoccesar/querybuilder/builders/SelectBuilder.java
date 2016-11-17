@@ -33,7 +33,7 @@ public class SelectBuilder implements QueryBuilder {
     private static final String STRING_SELECT = " SELECT ";
     private static final String STRING_GROUP_BY = " GROUP BY ";
     private static final String STRING_ORDER_BY = " ORDER BY ";
-    private static final String STRING_DISTINCT = " DISCTINCT ";
+    private static final String STRING_DISTINCT = " DISTINCT ";
 
     /**
      * Attributes
