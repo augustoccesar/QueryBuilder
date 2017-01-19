@@ -263,6 +263,13 @@ Start building the table.
 )
 ```
 
+## Methods and Classes Descriptions
+
+### Ways to build `Condition`:
+
+#### Equals
+```java
+```
 
 ## Examples
 

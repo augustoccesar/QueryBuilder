@@ -19,12 +19,10 @@ public class Condition {
 
     private List<Condition> nestedConditions;
 
-    // Build for old versions compatibility
+    // Constructors
 
     public Condition() {
     }
-
-    // Constructors
 
     public Condition(String field, Comparisons comparison, Object value) {
         this.field = field;
@@ -47,11 +45,13 @@ public class Condition {
         this.nestedConditions = nestedConditions;
     }
 
+    // Build for old versions compatibility
+
     public static Condition build(String field, Comparisons comparison, Object value) {
         return new Condition(field, comparison, value);
     }
 
-    // Methods
+    // Static methods built to be less verbose than the readable methods
 
     public static Condition eq(String field, Object value) {
         Condition condition = new Condition();
@@ -68,8 +68,6 @@ public class Condition {
         condition.comparison = Comparisons.IN;
         return condition;
     }
-
-    // Readable methods
 
     public static Condition isNull(String field) {
         Condition condition = new Condition();
@@ -143,28 +141,12 @@ public class Condition {
         return condition;
     }
 
-    public Condition and(Condition condition){
-        if(this.nestedConditions == null){
-            this.nestedConditions = new ArrayList<>();
-        }
-        this.nestedConditions.add(new Condition(Condition.AND, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
-        return this;
-    }
-
-    public Condition or(Condition condition){
-        if(this.nestedConditions == null){
-            this.nestedConditions = new ArrayList<>();
-        }
-        this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
-        return this;
-    }
+    // Methods built to improve readability
 
     public Condition column(String field) {
         this.field = field;
         return this;
     }
-
-    // Static methods and less verbose than the readable ones
 
     public Condition isEqualsTo(Object value) {
         this.value = value;
@@ -229,6 +211,24 @@ public class Condition {
     public Condition isLessThanOrEqualTo(Object value) {
         this.value = value;
         this.comparison = Comparisons.LESS_THAN_OR_EQUAL;
+        return this;
+    }
+
+    // Nested Conditions
+
+    public Condition and(Condition condition) {
+        if (this.nestedConditions == null) {
+            this.nestedConditions = new ArrayList<>();
+        }
+        this.nestedConditions.add(new Condition(Condition.AND, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
+        return this;
+    }
+
+    public Condition or(Condition condition) {
+        if (this.nestedConditions == null) {
+            this.nestedConditions = new ArrayList<>();
+        }
+        this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
         return this;
     }
 
