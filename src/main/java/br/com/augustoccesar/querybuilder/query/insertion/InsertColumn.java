@@ -1,4 +1,4 @@
-package br.com.augustoccesar.querybuilder.query;
+package br.com.augustoccesar.querybuilder.query.insertion;
 
 /**
  * Created by augustoccesar on 6/2/16.

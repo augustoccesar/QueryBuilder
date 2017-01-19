@@ -4,6 +4,35 @@ package br.com.augustoccesar.querybuilder.query;
  * Created by augustoccesar on 4/29/16.
  */
 public class Order {
+    private String field;
+    private Type type;
+
+    public Order by(String column, Type type) {
+        this.field = column;
+        this.type = type;
+        return this;
+    }
+
+    // Readable methods
+
+    public String getField() {
+        return field;
+    }
+
+    // Getters and Setters
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     public enum Type {
         ASC(" ASC "),
         DESC(" DESC ");
@@ -17,39 +46,5 @@ public class Order {
         public String getValue() {
             return value;
         }
-    }
-
-    private String field;
-    private Type type;
-
-    // Constructors
-
-    public Order(String field, Type type) {
-        this.field = field;
-        this.type = type;
-    }
-
-    // Builders
-
-    public static Order build(String field, Type type) {
-        return new Order(field, type);
-    }
-
-    // Getters and Setters
-
-    public String getField() {
-        return field;
-    }
-
-    public void setField(String field) {
-        this.field = field;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 }
