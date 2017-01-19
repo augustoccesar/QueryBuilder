@@ -53,6 +53,96 @@ public class Condition {
 
     // Methods
 
+    public static Condition eq(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.EQUALS;
+        return condition;
+    }
+
+    public static Condition in(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.IN;
+        return condition;
+    }
+
+    // Readable methods
+
+    public static Condition isNull(String field) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = null;
+        condition.comparison = Comparisons.IS_NULL;
+        return condition;
+    }
+
+    public static Condition isNotNull(String field) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = null;
+        condition.comparison = Comparisons.IS_NOT_NULL;
+        return condition;
+    }
+
+    public static Condition like(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.LIKE;
+        return condition;
+    }
+
+    public static Condition nlike(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.NOT_LIKE;
+        return condition;
+    }
+
+    public static Condition neq(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.DIFFERENT;
+        return condition;
+    }
+
+    public static Condition gt(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.GREATER_THAN;
+        return condition;
+    }
+
+    public static Condition gte(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.GREATER_THAN_OR_EQUAL;
+        return condition;
+    }
+
+    public static Condition lt(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.LESS_THAN;
+        return condition;
+    }
+
+    public static Condition lte(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.LESS_THAN_OR_EQUAL;
+        return condition;
+    }
+
     public Condition and(Condition condition){
         if(this.nestedConditions == null){
             this.nestedConditions = new ArrayList<>();
@@ -69,12 +159,12 @@ public class Condition {
         return this;
     }
 
-    // Readable methods
-
     public Condition column(String field) {
         this.field = field;
         return this;
     }
+
+    // Static methods and less verbose than the readable ones
 
     public Condition isEqualsTo(Object value) {
         this.value = value;
