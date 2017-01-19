@@ -267,8 +267,125 @@ Start building the table.
 
 ### Ways to build `Condition`:
 
-#### Equals
+#### EQUALS
 ```java
+new Condition().column("column_name").isEqualsTo(value)
+```
+```java
+Condition.build("column_name", Comparison.EQUALS, value)
+```
+```java
+Condition.eq("column_name", value)
+```
+
+#### DIFFERENT
+```java
+new Condition().column("column_name").isDifferentThan(value)
+```
+```java
+Condition.build("column_name", Comparison.DIFFERENT, value)
+```
+```java
+Condition.neq("column_name", value)
+```
+
+#### IN
+```java
+new Condition().column("column_name").isIn(value)
+```
+```java
+Condition.build("column_name", Comparison.IN, value)
+```
+```java
+Condition.in("column_name", value)
+```
+
+#### IS NULL
+```java
+new Condition().column("column_name").isNull(value)
+```
+```java
+Condition.build("column_name", Comparison.IS_NULL, value)
+```
+```java
+Condition.isNull("column_name", value)
+```
+
+#### IS NOT NULL
+```java
+new Condition().column("column_name").isNotNull(value)
+```
+```java
+Condition.build("column_name", Comparison.IS_NOT_NULL, value)
+```
+```java
+Condition.isNotNull("column_name", value)
+```
+
+#### LIKE
+```java
+new Condition().column("column_name").isLike(value)
+```
+```java
+Condition.build("column_name", Comparison.LIKE, value)
+```
+```java
+Condition.like("column_name", value)
+```
+
+#### NOT LIKE
+```java
+new Condition().column("column_name").isNotLike(value)
+```
+```java
+Condition.build("column_name", Comparison.NOT_LIKE, value)
+```
+```java
+Condition.nlike("column_name", value)
+```
+
+#### GREATER THAN
+```java
+new Condition().column("column_name").isGreaterThan(value)
+```
+```java
+Condition.build("column_name", Comparison.GREATER_THAN, value)
+```
+```java
+Condition.gt("column_name", value)
+```
+
+#### GREATER THAN OR EQUALS
+```java
+new Condition().column("column_name").isGreaterThanOrEqualTo(value)
+```
+```java
+Condition.build("column_name", Comparison.GREATER_THAN_OR_EQUAL, value)
+```
+```java
+Condition.gte("column_name", value)
+```
+
+#### LESS THAN
+```java
+new Condition().column("column_name").isLessThan(value)
+```
+```java
+Condition.build("column_name", Comparison.LESS_THAN, value)
+```
+```java
+Condition.lt("column_name", value)
+```
+
+#### LESS THAN OR EQUALS
+```java
+new Condition().column("column_name").isLessThanOrEqualTo(value)
+```
+```java
+Condition.build("column_name", Comparison.LESS_THAN_OR_EQUAL, value)
+```
+```java
+Condition.lte("column_name", value)
 ```
 
 ## Examples
