@@ -19,12 +19,10 @@ public class Condition {
 
     private List<Condition> nestedConditions;
 
-    // Build for old versions compatibility
+    // Constructors
 
     public Condition() {
     }
-
-    // Constructors
 
     public Condition(String field, Comparisons comparison, Object value) {
         this.field = field;
@@ -47,29 +45,103 @@ public class Condition {
         this.nestedConditions = nestedConditions;
     }
 
+    // Build for old versions compatibility
+
     public static Condition build(String field, Comparisons comparison, Object value) {
         return new Condition(field, comparison, value);
     }
 
-    // Methods
+    // Static methods built to be less verbose than the readable methods
 
-    public Condition and(Condition condition){
-        if(this.nestedConditions == null){
-            this.nestedConditions = new ArrayList<>();
-        }
-        this.nestedConditions.add(new Condition(Condition.AND, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
-        return this;
+    public static Condition eq(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.EQUALS;
+        return condition;
     }
 
-    public Condition or(Condition condition){
-        if(this.nestedConditions == null){
-            this.nestedConditions = new ArrayList<>();
-        }
-        this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
-        return this;
+    public static Condition in(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.IN;
+        return condition;
     }
 
-    // Readable methods
+    public static Condition isNull(String field) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = null;
+        condition.comparison = Comparisons.IS_NULL;
+        return condition;
+    }
+
+    public static Condition isNotNull(String field) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = null;
+        condition.comparison = Comparisons.IS_NOT_NULL;
+        return condition;
+    }
+
+    public static Condition like(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.LIKE;
+        return condition;
+    }
+
+    public static Condition nlike(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.NOT_LIKE;
+        return condition;
+    }
+
+    public static Condition neq(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.DIFFERENT;
+        return condition;
+    }
+
+    public static Condition gt(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.GREATER_THAN;
+        return condition;
+    }
+
+    public static Condition gte(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.GREATER_THAN_OR_EQUAL;
+        return condition;
+    }
+
+    public static Condition lt(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.LESS_THAN;
+        return condition;
+    }
+
+    public static Condition lte(String field, Object value) {
+        Condition condition = new Condition();
+        condition.field = field;
+        condition.value = value;
+        condition.comparison = Comparisons.LESS_THAN_OR_EQUAL;
+        return condition;
+    }
+
+    // Methods built to improve readability
 
     public Condition column(String field) {
         this.field = field;
@@ -139,6 +211,24 @@ public class Condition {
     public Condition isLessThanOrEqualTo(Object value) {
         this.value = value;
         this.comparison = Comparisons.LESS_THAN_OR_EQUAL;
+        return this;
+    }
+
+    // Nested Conditions
+
+    public Condition and(Condition condition) {
+        if (this.nestedConditions == null) {
+            this.nestedConditions = new ArrayList<>();
+        }
+        this.nestedConditions.add(new Condition(Condition.AND, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
+        return this;
+    }
+
+    public Condition or(Condition condition) {
+        if (this.nestedConditions == null) {
+            this.nestedConditions = new ArrayList<>();
+        }
+        this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
         return this;
     }
 

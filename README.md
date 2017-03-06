@@ -263,6 +263,130 @@ Start building the table.
 )
 ```
 
+## Methods and Classes Descriptions
+
+### Ways to build `Condition`:
+
+#### EQUALS
+```java
+new Condition().column("column_name").isEqualsTo(value)
+```
+```java
+Condition.build("column_name", Comparison.EQUALS, value)
+```
+```java
+Condition.eq("column_name", value)
+```
+
+#### DIFFERENT
+```java
+new Condition().column("column_name").isDifferentThan(value)
+```
+```java
+Condition.build("column_name", Comparison.DIFFERENT, value)
+```
+```java
+Condition.neq("column_name", value)
+```
+
+#### IN
+```java
+new Condition().column("column_name").isIn(value)
+```
+```java
+Condition.build("column_name", Comparison.IN, value)
+```
+```java
+Condition.in("column_name", value)
+```
+
+#### IS NULL
+```java
+new Condition().column("column_name").isNull(value)
+```
+```java
+Condition.build("column_name", Comparison.IS_NULL, value)
+```
+```java
+Condition.isNull("column_name", value)
+```
+
+#### IS NOT NULL
+```java
+new Condition().column("column_name").isNotNull(value)
+```
+```java
+Condition.build("column_name", Comparison.IS_NOT_NULL, value)
+```
+```java
+Condition.isNotNull("column_name", value)
+```
+
+#### LIKE
+```java
+new Condition().column("column_name").isLike(value)
+```
+```java
+Condition.build("column_name", Comparison.LIKE, value)
+```
+```java
+Condition.like("column_name", value)
+```
+
+#### NOT LIKE
+```java
+new Condition().column("column_name").isNotLike(value)
+```
+```java
+Condition.build("column_name", Comparison.NOT_LIKE, value)
+```
+```java
+Condition.nlike("column_name", value)
+```
+
+#### GREATER THAN
+```java
+new Condition().column("column_name").isGreaterThan(value)
+```
+```java
+Condition.build("column_name", Comparison.GREATER_THAN, value)
+```
+```java
+Condition.gt("column_name", value)
+```
+
+#### GREATER THAN OR EQUALS
+```java
+new Condition().column("column_name").isGreaterThanOrEqualTo(value)
+```
+```java
+Condition.build("column_name", Comparison.GREATER_THAN_OR_EQUAL, value)
+```
+```java
+Condition.gte("column_name", value)
+```
+
+#### LESS THAN
+```java
+new Condition().column("column_name").isLessThan(value)
+```
+```java
+Condition.build("column_name", Comparison.LESS_THAN, value)
+```
+```java
+Condition.lt("column_name", value)
+```
+
+#### LESS THAN OR EQUALS
+```java
+new Condition().column("column_name").isLessThanOrEqualTo(value)
+```
+```java
+Condition.build("column_name", Comparison.LESS_THAN_OR_EQUAL, value)
+```
+```java
+Condition.lte("column_name", value)
+```
 
 ## Examples
 
@@ -357,6 +481,39 @@ QueryBuilder queryBuilder = new SelectBuilder()
                                 new Condition().column("bsh.state_id").isEqualsTo(2)
                         )
                 ))
+        )
+        .order(
+                new Order().by("bsh.position", Order.Type.ASC)
+        )
+        .limit((long) 10)
+        .offset(0L);
+String sql = queryBuilder.build();
+System.out.println(sql);
+// Output: SELECT b.id AS b_id, b.link AS b_link, b.name AS b_name, aut.id AS aut_id, aut.link AS aut_link, aut.name AS aut_name, bsh.promo AS bsh_promo, bsh.position AS bsh_position FROM book b INNER JOIN author aut ON b.author_id = aut.id LEFT JOIN bookshelf bsh ON b.id = bsh.book_id WHERE bsh.store_id = 3 AND ( b.deleted_at IS NULL AND ( bsh.state_id = 1 OR bsh.state_id = 2 ) ) ORDER BY bsh.position ASC LIMIT 10 OFFSET 0
+```
+
+Same example as above, but with the new less verbose way to build conditions
+
+```java
+QueryBuilder queryBuilder = new SelectBuilder()
+        .select(
+                "b.id", "b.link", "b.name",
+                "aut.id", "aut.link", "aut.name",
+                "bsh.promo", "bsh.position"
+        )
+        .from("book b")
+        .joins(
+                new Join(Join.Type.INNER_JOIN).table("author aut").on("b.author_id = aut.id"),
+                new Join(Join.Type.LEFT_JOIN).table("bookshelf bsh").on("b.id = bsh.book_id")
+        )
+        .where(
+                Condition.eq("bsh.store_id", 3)
+                        .and(
+                                Condition.isNull("b.deleted_at")
+                        )
+                        .and(
+                                Condition.eq("bsh.state_id", 1).or(Condition.eq("bsh.state_id", 2))
+                        )
         )
         .order(
                 new Order().by("bsh.position", Order.Type.ASC)

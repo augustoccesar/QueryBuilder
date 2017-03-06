@@ -51,7 +51,7 @@ public class SelectBuilder implements QueryBuilder {
     private Long offset;
     private Condition conditionBase;
     private List<Order> orders;
-    private String groupBy;
+    private List<String> groupByList;
     private boolean withAlias = true;
 
     /**
@@ -233,8 +233,20 @@ public class SelectBuilder implements QueryBuilder {
      * @param groupBy String value of the column to be grouped by.
      * @return This instance of SelectBuilder.
      */
+    @Deprecated
     public SelectBuilder groupBy(String groupBy) {
-        this.groupBy = groupBy;
+        if (this.groupByList == null)
+            this.groupByList = new ArrayList<>();
+
+        this.groupByList.add(groupBy);
+        return this;
+    }
+
+    public SelectBuilder groupBy(String... groupByItems) {
+        if (this.groupByList == null)
+            this.groupByList = new ArrayList<>();
+
+        this.groupByList.addAll(Arrays.asList(groupByItems));
         return this;
     }
 
@@ -417,8 +429,19 @@ public class SelectBuilder implements QueryBuilder {
             ColumnHelper.runNestedConditions(stringBuilder, conditionBase);
         }
 
-        if (groupBy != null) {
-            stringBuilder.append(STRING_GROUP_BY).append(STRING_OPEN_PARENTHESES).append(ColumnHelper.columnAlias(groupBy)).append(STRING_CLOSE_PARENTHESES);
+        if (groupByList != null) {
+            stringBuilder.append(STRING_GROUP_BY);
+            for (int i = 0; i < groupByList.size(); i++) {
+                String item = groupByList.get(i);
+                if (i < groupByList.size() - 1) {
+                    stringBuilder.append(ColumnHelper.columnAlias(item)).append(STRING_COMMA);
+                } else {
+                    stringBuilder.append(ColumnHelper.columnAlias(item));
+                }
+
+            }
+//            stringBuilder.append(STRING_GROUP_BY).append(STRING_OPEN_PARENTHESES).append(ColumnHelper.columnAlias(groupBy)).append(STRING_CLOSE_PARENTHESES);
+            // Multiple fields with parentheses error reported
         }
 
         if (this.orders != null && this.orders.size() > 0) {
