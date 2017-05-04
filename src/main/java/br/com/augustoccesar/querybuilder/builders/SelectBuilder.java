@@ -1,16 +1,11 @@
 package br.com.augustoccesar.querybuilder.builders;
 
-import br.com.augustoccesar.querybuilder.helpers.ColumnHelper;
-import br.com.augustoccesar.querybuilder.helpers.ListHelpers;
-import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
 import br.com.augustoccesar.querybuilder.query.*;
-import br.com.augustoccesar.querybuilder.query.aggregation.Aggregation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by augustoccesar on 6/13/16.
@@ -40,29 +35,16 @@ public class SelectBuilder implements QueryBuilder {
      */
     private String alias;
     private List<String> fields;
-    private List<UnionAll> unionAllFrom;
-    private List<Aggregation> aggregations;
-    private List<Function> functions;
-    private List<String> tablesAndPrefixes;
-    private List<SelectBuilder> fromSelectBuilders;
-    private List<String> distinctList;
     private List<Join> joins;
-    private Long limit;
-    private Long offset;
-    private Condition conditionBase;
-    private List<Order> orders;
-    private List<String> groupByList;
-    private boolean withAlias = true;
 
     /**
-     * Method for creating an UnionAll statement on the SelectBuilder.
-     *
-     * @param alias          Alias to the UNION ALL clause.
-     * @param selectBuilders List of the SelectBuilders that are going to be in the UNION ALL clause.
-     * @return An instance of the UnionAll class.
+     * Constructors
      */
-    public static UnionAll unionAll(String alias, SelectBuilder... selectBuilders) {
-        return new UnionAll(alias, selectBuilders);
+    public SelectBuilder() {
+    }
+
+    public SelectBuilder(String alias) {
+        this.alias(alias);
     }
 
     /**
@@ -90,83 +72,6 @@ public class SelectBuilder implements QueryBuilder {
                 }
 
                 this.fields.add(field.toString());
-            }
-        });
-
-        return this;
-    }
-
-    /**
-     * Method for building the list of distinct fields that are going to be queried.
-     *
-     * @param fields List of the fields that are going to be DISTINCT
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder selectDistinct(String... fields) {
-        if (this.distinctList == null) {
-            this.distinctList = new ArrayList<>();
-        }
-        this.distinctList.addAll(Arrays.asList(fields));
-
-        return this;
-    }
-
-    /**
-     * Method for building the list of aggregations that are going to be queried. Examples: SUM, COUNT, etc
-     *
-     * @param aggregations List of the aggregations.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder selectAggregations(Aggregation... aggregations) {
-        if (this.aggregations == null) {
-            this.aggregations = new ArrayList<>();
-        }
-        this.aggregations.addAll(Arrays.asList(aggregations));
-
-        return this;
-    }
-
-    /**
-     * Method for building the list of functions that are going to be queried on the SELECT clause.
-     *
-     * @param functions List of the functions.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder selectFunctions(Function... functions) {
-        if (this.functions == null) {
-            this.functions = new ArrayList<>();
-        }
-        this.functions.addAll(Arrays.asList(functions));
-
-        return this;
-    }
-
-    /**
-     * Method for building the FROM clause.
-     *
-     * @param tableNameAndPrefix List of the tables (with or without alias) that are going to be used on the query.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder from(Object... tableNameAndPrefix) {
-        Arrays.asList(tableNameAndPrefix).forEach((field) -> {
-            if (field instanceof String) {
-                if (this.tablesAndPrefixes == null) {
-                    this.tablesAndPrefixes = new ArrayList<>();
-                }
-
-                this.tablesAndPrefixes.add(field.toString());
-            } else if (field instanceof UnionAll) {
-                if (this.unionAllFrom == null) {
-                    this.unionAllFrom = new ArrayList<>();
-                }
-
-                this.unionAllFrom.add((UnionAll) field);
-            } else if (field instanceof SelectBuilder) {
-                if (this.fromSelectBuilders == null) {
-                    this.fromSelectBuilders = new ArrayList<>();
-                }
-
-                this.fromSelectBuilders.add((SelectBuilder) field);
             }
         });
 
@@ -204,82 +109,11 @@ public class SelectBuilder implements QueryBuilder {
     /**
      * Method for building the WHERE clause.
      *
-     * @param conditionBase Instance of the base Condition Object.
+     * @param condition Instance of the base Condition Object.
      * @return This instance of SelectBuilder.
      */
-    public SelectBuilder where(Condition conditionBase) {
-        this.conditionBase = conditionBase;
-        return this;
-    }
-
-    /**
-     * Method for building the ORDER clause.
-     *
-     * @param orders Array of Order objects.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder order(Order... orders) {
-        if (this.orders == null) {
-            this.orders = new ArrayList<>();
-        }
-
-        this.orders.addAll(Arrays.asList(orders));
-        return this;
-    }
-
-    /**
-     * Method for building the GROUP BY clause.
-     *
-     * @param groupBy String value of the column to be grouped by.
-     * @return This instance of SelectBuilder.
-     */
-    @Deprecated
-    public SelectBuilder groupBy(String groupBy) {
-        if (this.groupByList == null)
-            this.groupByList = new ArrayList<>();
-
-        this.groupByList.add(groupBy);
-        return this;
-    }
-
-    public SelectBuilder groupBy(String... groupByItems) {
-        if (this.groupByList == null)
-            this.groupByList = new ArrayList<>();
-
-        this.groupByList.addAll(Arrays.asList(groupByItems));
-        return this;
-    }
-
-    /**
-     * Method for building the LIMIT clause.
-     *
-     * @param value Value of the limit.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder limit(Long value) {
-        this.limit = value;
-        return this;
-    }
-
-    /**
-     * Method for building OFFSET clause.
-     *
-     * @param value Value of the offset.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder offset(Long value) {
-        this.offset = value;
-        return this;
-    }
-
-    /**
-     * Method for defining if want the SelectBuilder to build the query with alias on the columns.
-     *
-     * @param flag Value of the flag.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder withAlias(boolean flag) {
-        this.withAlias = flag;
+    public SelectBuilder where(Condition condition) {
+        // TODO Implement
         return this;
     }
 
@@ -290,181 +124,8 @@ public class SelectBuilder implements QueryBuilder {
      */
     @Override
     public String build() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        boolean hasFields = fields != null && fields.size() > 0;
-        boolean hasUnionAllFrom = unionAllFrom != null && unionAllFrom.size() > 0;
-        boolean hasFromSelectBuilders = fromSelectBuilders != null && fromSelectBuilders.size() > 0;
-        boolean hasAggregations = aggregations != null && aggregations.size() > 0;
-        boolean hasDistinct = distinctList != null && distinctList.size() > 0;
-        boolean hasFunctions = functions != null && functions.size() > 0;
-
-        if (hasFields) {
-            for (int i = 0; i < this.fields.size(); i++) {
-                if (ColumnHelper.hasTableName(this.fields.get(i)) &&
-                        !ColumnHelper.isAll(this.fields.get(i)) &&
-                        this.withAlias) {
-                    String newField = this.fields.get(i) + STRING_AS + ColumnHelper.columnAlias(this.fields.get(i));
-                    this.fields.set(i, newField);
-                }
-            }
-        }
-
-        stringBuilder.append(STRING_SELECT);
-
-        if (hasFunctions) {
-            for (int i = 0; i < functions.size(); i++) {
-                Function function = functions.get(i);
-
-                stringBuilder.append(function.getName());
-                if (function.getParameters() != null && function.getParameters().getParametersList().size() > 0) {
-                    stringBuilder.append(STRING_OPEN_PARENTHESES.trim());
-                    for (int j = 0; j < function.getParameters().getParametersList().size(); j++) {
-                        String parameter = function.getParameters().getParametersList().get(j);
-                        stringBuilder.append(parameter);
-                        if (j != function.getParameters().getParametersList().size() - 1)
-                            stringBuilder.append(STRING_COMMA);
-                    }
-                    stringBuilder.append(STRING_CLOSE_PARENTHESES.trim()).append(STRING_SPACE);
-                }
-
-                if (function.getAlias() != null) {
-                    stringBuilder.append(STRING_AS).append(function.getAlias());
-                }
-
-                if (i != functions.size() - 1) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-
-            if (hasFields || hasAggregations || hasDistinct) {
-                stringBuilder.append(STRING_COMMA);
-            }
-        }
-
-        if (hasDistinct) {
-            for (int i = 0; i < distinctList.size(); i++) {
-                stringBuilder.append(STRING_DISTINCT);
-                stringBuilder.append(distinctList.get(i));
-                stringBuilder.append(STRING_AS).append(ColumnHelper.columnAlias(distinctList.get(i)));
-                if (i != distinctList.size() - 1) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-
-            if (hasAggregations || hasFields) {
-                stringBuilder.append(STRING_COMMA);
-            }
-        }
-
-        if (hasFields) {
-            ListHelpers.runListIterator(stringBuilder, fields.listIterator(), STRING_COMMA);
-            if (hasAggregations)
-                stringBuilder.append(STRING_COMMA);
-        }
-
-        if (hasAggregations) {
-            for (int i = 0; i < aggregations.size(); i++) {
-                Aggregation aggregation = aggregations.get(i);
-
-                stringBuilder.append(aggregation.getAggregationType().getCommand()).append(STRING_OPEN_PARENTHESES.trim());
-                stringBuilder.append(aggregation.getColumnName());
-                stringBuilder.append(STRING_CLOSE_PARENTHESES.trim()).append(STRING_AS);
-                stringBuilder.append(aggregation.getAggregationType().getCommand().toLowerCase()).append(STRING_UNDERLINE).append(ColumnHelper.columnAlias(aggregation.getColumnName()));
-
-                if (i != aggregations.size() - 1) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-        }
-
-        stringBuilder.append(STRING_FROM);
-        if (tablesAndPrefixes != null) {
-            ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
-            if (hasUnionAllFrom || hasFromSelectBuilders) {
-                stringBuilder.append(STRING_COMMA);
-            }
-        }
-
-        if (hasFromSelectBuilders) {
-            for (SelectBuilder selectBuilder : fromSelectBuilders) {
-                stringBuilder.append(" ( ");
-                stringBuilder.append(selectBuilder.build());
-                stringBuilder.append(" ) ");
-                if (selectBuilder.getAlias() != null) {
-                    stringBuilder.append(" AS ").append(selectBuilder.getAlias());
-                }
-            }
-
-            if (hasUnionAllFrom) {
-                stringBuilder.append(STRING_COMMA);
-            }
-        }
-
-        if (hasUnionAllFrom) {
-            for (UnionAll unionAll : unionAllFrom) {
-                stringBuilder.append(" ( ");
-                for (int j = 0; j < unionAll.getSelectBuilderList().size(); j++) {
-                    stringBuilder.append(" ( ");
-                    SelectBuilder selectBuilder = unionAll.getSelectBuilderList().get(j);
-                    stringBuilder.append(selectBuilder.build());
-                    stringBuilder.append(" ) ");
-                    if (selectBuilder.getAlias() != null) {
-                        stringBuilder.append(" AS ").append(selectBuilder.getAlias());
-                    }
-                    if (j < unionAll.getSelectBuilderList().size() - 1)
-                        stringBuilder.append(" UNION ALL ");
-                }
-                stringBuilder.append(" ) as ").append(unionAll.getAlias());
-            }
-        }
-
-        if (joins != null && joins.size() > 0) {
-            List<String> joinStrings = joins.stream().map(join -> join.type + " " + join.tableAndPrefix + STRING_ON + join.joinOn).collect(Collectors.toList());
-            ListHelpers.runListIterator(stringBuilder, joinStrings.listIterator(), null);
-        }
-
-        if (this.conditionBase != null) {
-            stringBuilder.append(STRING_WHERE);
-            ColumnHelper.runNestedConditions(stringBuilder, conditionBase);
-        }
-
-        if (groupByList != null) {
-            stringBuilder.append(STRING_GROUP_BY);
-            for (int i = 0; i < groupByList.size(); i++) {
-                String item = groupByList.get(i);
-                if (i < groupByList.size() - 1) {
-                    stringBuilder.append(ColumnHelper.columnAlias(item)).append(STRING_COMMA);
-                } else {
-                    stringBuilder.append(ColumnHelper.columnAlias(item));
-                }
-
-            }
-//            stringBuilder.append(STRING_GROUP_BY).append(STRING_OPEN_PARENTHESES).append(ColumnHelper.columnAlias(groupBy)).append(STRING_CLOSE_PARENTHESES);
-            // Multiple fields with parentheses error reported
-        }
-
-        if (this.orders != null && this.orders.size() > 0) {
-            stringBuilder.append(STRING_ORDER_BY);
-            for (int i = 0; i < this.orders.size(); i++) {
-                stringBuilder
-                        .append(this.orders.get(i).getField())
-                        .append(this.orders.get(i).getType().getValue());
-                if (!(i == this.orders.size() - 1)) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-        }
-
-        if (limit != null) {
-            stringBuilder.append(STRING_LIMIT).append(limit).append(STRING_SPACE);
-        }
-
-        if (offset != null) {
-            stringBuilder.append(STRING_OFFSET).append(offset).append(STRING_SPACE);
-        }
-
-        return stringBuilder.toString().trim().replaceAll(" +", STRING_SPACE);
+        // TODO Implement
+        return null;
     }
 
     // Getters and Setters

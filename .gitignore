@@ -2,6 +2,8 @@
 .gradle
 .idea
 *.iml
+.gradle
+build
 out
 gen
 target
