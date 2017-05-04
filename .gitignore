@@ -1,9 +1,15 @@
 
+.gradle
 .idea
 .gradle
 *.iml
+<<<<<<< HEAD
+=======
+.gradle
+>>>>>>> v2.0.0
 build
 out
 gen
 target
 /src/main/java/br/com/augustoccesar/querybuilder/examples
+build

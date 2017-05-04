@@ -1,8 +1,7 @@
 package br.com.augustoccesar.querybuilder.query;
 
-import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
+import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,41 +14,6 @@ public class Condition {
     private String field;
     private Comparisons comparison;
     private Object value;
-    private String nestedLink;
-
-    private List<Condition> nestedConditions;
-
-    // Constructors
-
-    public Condition() {
-    }
-
-    public Condition(String field, Comparisons comparison, Object value) {
-        this.field = field;
-        this.comparison = comparison;
-        this.value = value;
-    }
-
-    public Condition(String nestedLink, String field, Comparisons comparison, Object value) {
-        this.nestedLink = nestedLink;
-        this.field = field;
-        this.comparison = comparison;
-        this.value = value;
-    }
-
-    public Condition(String nestedLink, String field, Comparisons comparison, Object value, List<Condition> nestedConditions) {
-        this.nestedLink = nestedLink;
-        this.field = field;
-        this.comparison = comparison;
-        this.value = value;
-        this.nestedConditions = nestedConditions;
-    }
-
-    // Build for old versions compatibility
-
-    public static Condition build(String field, Comparisons comparison, Object value) {
-        return new Condition(field, comparison, value);
-    }
 
     // Static methods built to be less verbose than the readable methods
 
@@ -141,97 +105,6 @@ public class Condition {
         return condition;
     }
 
-    // Methods built to improve readability
-
-    public Condition column(String field) {
-        this.field = field;
-        return this;
-    }
-
-    public Condition isEqualsTo(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.EQUALS;
-        return this;
-    }
-
-    public Condition isIn(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.IN;
-        return this;
-    }
-
-    public Condition isNull() {
-        this.value = null;
-        this.comparison = Comparisons.IS_NULL;
-        return this;
-    }
-
-    public Condition isNotNull() {
-        this.value = null;
-        this.comparison = Comparisons.IS_NOT_NULL;
-        return this;
-    }
-
-    public Condition isLike(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.LIKE;
-        return this;
-    }
-
-    public Condition isNotLike(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.NOT_LIKE;
-        return this;
-    }
-
-    public Condition isDifferentThan(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.DIFFERENT;
-        return this;
-    }
-
-    public Condition isGreaterThan(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.GREATER_THAN;
-        return this;
-    }
-
-    public Condition isGreaterThanOrEqualTo(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.GREATER_THAN_OR_EQUAL;
-        return this;
-    }
-
-    public Condition isLessThan(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.LESS_THAN;
-        return this;
-    }
-
-    public Condition isLessThanOrEqualTo(Object value) {
-        this.value = value;
-        this.comparison = Comparisons.LESS_THAN_OR_EQUAL;
-        return this;
-    }
-
-    // Nested Conditions
-
-    public Condition and(Condition condition) {
-        if (this.nestedConditions == null) {
-            this.nestedConditions = new ArrayList<>();
-        }
-        this.nestedConditions.add(new Condition(Condition.AND, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
-        return this;
-    }
-
-    public Condition or(Condition condition) {
-        if (this.nestedConditions == null) {
-            this.nestedConditions = new ArrayList<>();
-        }
-        this.nestedConditions.add(new Condition(Condition.OR, condition.getField(), condition.getComparison(), condition.getValue(), condition.getNestedConditions()));
-        return this;
-    }
-
     // Getters and Setters
 
     public String getField() {
@@ -248,22 +121,6 @@ public class Condition {
 
     public void setComparison(Comparisons comparison) {
         this.comparison = comparison;
-    }
-
-    public String getNestedLink() {
-        return nestedLink;
-    }
-
-    public void setNestedLink(String nestedLink) {
-        this.nestedLink = nestedLink;
-    }
-
-    public List<Condition> getNestedConditions() {
-        return nestedConditions;
-    }
-
-    public void setNestedConditions(List<Condition> nestedConditions) {
-        this.nestedConditions = nestedConditions;
     }
 
     public Object getValue() {
@@ -295,8 +152,8 @@ public class Condition {
                 }
                 response += ")";
                 return response;
-            } else if (value instanceof QueryBuilder) {
-                return " ( " + ((QueryBuilder) value).build() + " ) ";
+            } else if (value instanceof SelectBuilder) {
+                return " ( " + ((SelectBuilder) value).build() + " ) ";
             } else if (value instanceof Column) {
                 return ((Column) value).getName();
             } else {
