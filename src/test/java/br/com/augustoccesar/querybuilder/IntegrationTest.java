@@ -226,7 +226,7 @@ public class IntegrationTest {
 //
 //        assertEquals(expected, selectBuilder.build());
 //    }
-
+//
 //    @Test
 //    public void shouldBeAbleToSetLogicalConditionsCompact() {
 //        SelectBuilder selectBuilder = new SelectBuilder();
@@ -245,7 +245,7 @@ public class IntegrationTest {
 //
 //        assertEquals(expected, selectBuilder.build());
 //    }
-
+//
 //    @Test
 //    public void shouldBeAbleToSetNestedLogicalConditionsCompact() {
 //        SelectBuilder selectBuilder = new SelectBuilder();
