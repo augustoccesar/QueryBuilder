@@ -1,9 +1,9 @@
 package br.com.augustoccesar.querybuilder.query;
 
-import br.com.augustoccesar.querybuilder.exceptions.InvalidPattern;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Author: augustoccesar
@@ -11,18 +11,34 @@ import static org.junit.Assert.*;
  */
 public class TableTest {
     @Test
-    public void shouldBeAbleToCreateUsingMarkdown() throws InvalidPattern {
-        Table table = new Table("users{u}");
+    public void shouldBeAbleToCreateUsingMarkdown() {
+        Table table = Table.fromMarkdown("users{u}");
 
         assertEquals("users", table.getName());
         assertEquals("u", table.getAlias());
     }
 
     @Test
-    public void shouldBeAbleToCreateWithoutMarkdown() throws InvalidPattern {
-        Table table = new Table("users u");
+    public void shouldBeAbleToCreateUsingEmptyMarkdown() {
+        Table table = Table.fromMarkdown("users{_}");
+
+        assertEquals("users", table.getName());
+        assertNull(table.getAlias());
+    }
+
+    @Test
+    public void shouldBeAbleToCreateWithoutMarkdown() {
+        Table table = Table.fromMarkdown("users u");
 
         assertEquals("users", table.getName());
         assertEquals("u", table.getAlias());
+    }
+
+    @Test
+    public void shouldBeAbleToCreateWithoutMarkdownWithoutAlias() {
+        Table table = Table.fromMarkdown("users");
+
+        assertEquals("users", table.getName());
+        assertNull(table.getAlias());
     }
 }

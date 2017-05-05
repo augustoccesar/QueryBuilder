@@ -13,24 +13,44 @@ public class Table {
     private String name;
     private String alias;
 
-    public Table(String creationString) {
+    // Constructors
+
+    public Table(String name) {
+        this.name = name;
+    }
+
+    public Table(String name, String alias) {
+        this.name = name;
+        this.alias = alias;
+    }
+
+    // Builders
+
+    public static Table fromMarkdown(String creationString) {
         Pattern patternMarkdown = Pattern.compile("(\\w+)\\{(\\w+)\\}");
-        Pattern patternPlain = Pattern.compile("(\\w+)\\s(\\w+)");
+        Pattern patternPlain = Pattern.compile("(\\w+)(\\s(\\w+))*");
 
         Matcher matcherMarkdown = patternMarkdown.matcher(creationString);
+        Matcher matcherPlain = patternPlain.matcher(creationString);
+
         if (matcherMarkdown.matches()) {
-            this.name = matcherMarkdown.group(1);
-            this.alias = matcherMarkdown.group(2);
+            String name = matcherMarkdown.group(1);
+            String alias = matcherMarkdown.group(2);
+
+            alias = alias.equals("_") ? null : alias;
+
+            return new Table(name, alias);
+        } else if (matcherPlain.matches()) {
+            String name = matcherPlain.group(1);
+            String alias = matcherPlain.group(3);
+
+            return new Table(name, alias);
         } else {
-            Matcher matcherPlain = patternPlain.matcher(creationString);
-            if (matcherPlain.matches()){
-                this.name = matcherPlain.group(1);
-                this.alias = matcherPlain.group(2);
-            }else{
-                throw new InvalidPattern("Table");
-            }
+            throw new InvalidPattern("Table");
         }
     }
+
+    // Getters and Setters
 
     public String getName() {
         return name;
