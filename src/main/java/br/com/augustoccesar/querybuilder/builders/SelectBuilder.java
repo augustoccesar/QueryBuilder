@@ -1,474 +1,128 @@
 package br.com.augustoccesar.querybuilder.builders;
 
-import br.com.augustoccesar.querybuilder.helpers.ColumnHelper;
-import br.com.augustoccesar.querybuilder.helpers.ListHelpers;
-import br.com.augustoccesar.querybuilder.interfaces.QueryBuilder;
-import br.com.augustoccesar.querybuilder.query.*;
-import br.com.augustoccesar.querybuilder.query.aggregation.Aggregation;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import br.com.augustoccesar.querybuilder.constants.CommonStrings;
+import br.com.augustoccesar.querybuilder.query.Comparison;
+import br.com.augustoccesar.querybuilder.query.Join;
+import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
+import br.com.augustoccesar.querybuilder.query.trackers.ConditionsTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.FromTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.JoinTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.SelectTracker;
 
 /**
  * Created by augustoccesar on 6/13/16.
  */
-public class SelectBuilder implements QueryBuilder {
-    /**
-     * Commom Strings
-     */
-    private static final String STRING_UNDERLINE = "_";
-    private static final String STRING_SPACE = " ";
-    private static final String STRING_COMMA = " , ";
-    private static final String STRING_OPEN_PARENTHESES = " ( ";
-    private static final String STRING_CLOSE_PARENTHESES = " ) ";
-    private static final String STRING_AS = " AS ";
-    private static final String STRING_ON = " ON ";
-    private static final String STRING_FROM = " FROM ";
-    private static final String STRING_LIMIT = " LIMIT ";
-    private static final String STRING_WHERE = " WHERE ";
-    private static final String STRING_OFFSET = " OFFSET ";
-    private static final String STRING_SELECT = " SELECT ";
-    private static final String STRING_GROUP_BY = " GROUP BY ";
-    private static final String STRING_ORDER_BY = " ORDER BY ";
-    private static final String STRING_DISTINCT = " DISTINCT ";
-
+public class SelectBuilder implements Buildable {
     /**
      * Attributes
      */
     private String alias;
-    private List<String> fields;
-    private List<UnionAll> unionAllFrom;
-    private List<Aggregation> aggregations;
-    private List<Function> functions;
-    private List<String> tablesAndPrefixes;
-    private List<SelectBuilder> fromSelectBuilders;
-    private List<String> distinctList;
-    private List<Join> joins;
-    private Long limit;
-    private Long offset;
-    private Condition conditionBase;
-    private List<Order> orders;
-    private List<String> groupByList;
-    private boolean withAlias = true;
+
+    private SelectTracker selectTracker = new SelectTracker();
+    private FromTracker fromTracker = new FromTracker();
+    private JoinTracker joinTracker = new JoinTracker();
+    private ConditionsTracker conditionsTracker = new ConditionsTracker();
 
     /**
-     * Method for creating an UnionAll statement on the SelectBuilder.
-     *
-     * @param alias          Alias to the UNION ALL clause.
-     * @param selectBuilders List of the SelectBuilders that are going to be in the UNION ALL clause.
-     * @return An instance of the UnionAll class.
+     * Constructors
      */
-    public static UnionAll unionAll(String alias, SelectBuilder... selectBuilders) {
-        return new UnionAll(alias, selectBuilders);
+    public SelectBuilder() {
     }
 
-    /**
-     * Method for setting an alias to the SelectBuilder.
-     *
-     * @param alias Alias to the SelectBuilder.
-     * @return This instance of SelectBuilder.
-     */
+    public SelectBuilder(String alias) {
+        this.alias(alias);
+    }
+
     public SelectBuilder alias(String alias) {
         this.alias = alias;
         return this;
     }
 
-    /**
-     * Method for building the list of fields that are going to be queried.
-     *
-     * @param fields List of the fields, with or without the table alias.
-     * @return This instance of SelectBuilder.
-     */
     public SelectBuilder select(Object... fields) {
-        Arrays.asList(fields).forEach((field) -> {
-            if (field instanceof String) {
-                if (this.fields == null) {
-                    this.fields = new ArrayList<>();
-                }
-
-                this.fields.add(field.toString());
-            }
-        });
-
+        this.selectTracker.addSelect(fields);
         return this;
     }
 
-    /**
-     * Method for building the list of distinct fields that are going to be queried.
-     *
-     * @param fields List of the fields that are going to be DISTINCT
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder selectDistinct(String... fields) {
-        if (this.distinctList == null) {
-            this.distinctList = new ArrayList<>();
-        }
-        this.distinctList.addAll(Arrays.asList(fields));
-
+    public SelectBuilder from(String... fromTables) {
+        this.fromTracker.addMarkedTables(fromTables);
         return this;
     }
 
-    /**
-     * Method for building the list of aggregations that are going to be queried. Examples: SUM, COUNT, etc
-     *
-     * @param aggregations List of the aggregations.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder selectAggregations(Aggregation... aggregations) {
-        if (this.aggregations == null) {
-            this.aggregations = new ArrayList<>();
-        }
-        this.aggregations.addAll(Arrays.asList(aggregations));
-
-        return this;
-    }
-
-    /**
-     * Method for building the list of functions that are going to be queried on the SELECT clause.
-     *
-     * @param functions List of the functions.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder selectFunctions(Function... functions) {
-        if (this.functions == null) {
-            this.functions = new ArrayList<>();
-        }
-        this.functions.addAll(Arrays.asList(functions));
-
-        return this;
-    }
-
-    /**
-     * Method for building the FROM clause.
-     *
-     * @param tableNameAndPrefix List of the tables (with or without alias) that are going to be used on the query.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder from(Object... tableNameAndPrefix) {
-        Arrays.asList(tableNameAndPrefix).forEach((field) -> {
-            if (field instanceof String) {
-                if (this.tablesAndPrefixes == null) {
-                    this.tablesAndPrefixes = new ArrayList<>();
-                }
-
-                this.tablesAndPrefixes.add(field.toString());
-            } else if (field instanceof UnionAll) {
-                if (this.unionAllFrom == null) {
-                    this.unionAllFrom = new ArrayList<>();
-                }
-
-                this.unionAllFrom.add((UnionAll) field);
-            } else if (field instanceof SelectBuilder) {
-                if (this.fromSelectBuilders == null) {
-                    this.fromSelectBuilders = new ArrayList<>();
-                }
-
-                this.fromSelectBuilders.add((SelectBuilder) field);
-            }
-        });
-
-        return this;
-    }
-
-    /**
-     * Method for adding a join to the query.
-     *
-     * @param join Join object instance.
-     * @return This instance of SelectBuilder.
-     */
     public SelectBuilder join(Join join) {
-        if (this.joins == null)
-            this.joins = new ArrayList<>();
-
-        this.joins.add(join);
+        this.joinTracker.addJoin(join);
         return this;
     }
 
-    /**
-     * Method for adding multiple joins to the query. Similar to #{@link #join(Join)} but with a list of Join objects.
-     *
-     * @param joins Array of Join objects.
-     * @return This instance of SelectBuilder.
-     */
     public SelectBuilder joins(Join... joins) {
-        if (this.joins == null)
-            this.joins = new ArrayList<>();
-
-        Collections.addAll(this.joins, joins);
+        this.joinTracker.addJoins(joins);
         return this;
     }
 
-    /**
-     * Method for building the WHERE clause.
-     *
-     * @param conditionBase Instance of the base Condition Object.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder where(Condition conditionBase) {
-        this.conditionBase = conditionBase;
+    public SelectBuilder innerJoin(String markedTable, String markedLeftOn, String markedRightOn) {
+        this.joinTracker.addJoin(new Join(Join.INNER, markedTable, markedLeftOn, markedRightOn));
         return this;
     }
 
-    /**
-     * Method for building the ORDER clause.
-     *
-     * @param orders Array of Order objects.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder order(Order... orders) {
-        if (this.orders == null) {
-            this.orders = new ArrayList<>();
-        }
-
-        this.orders.addAll(Arrays.asList(orders));
+    public SelectBuilder leftJoin(String markedTable, String markedLeftOn, String markedRightOn) {
+        this.joinTracker.addJoin(new Join(Join.LEFT, markedTable, markedLeftOn, markedRightOn));
         return this;
     }
 
-    /**
-     * Method for building the GROUP BY clause.
-     *
-     * @param groupBy String value of the column to be grouped by.
-     * @return This instance of SelectBuilder.
-     */
-    @Deprecated
-    public SelectBuilder groupBy(String groupBy) {
-        if (this.groupByList == null)
-            this.groupByList = new ArrayList<>();
-
-        this.groupByList.add(groupBy);
+    public SelectBuilder rightJoin(String markedTable, String markedLeftOn, String markedRightOn) {
+        this.joinTracker.addJoin(new Join(Join.RIGHT, markedTable, markedLeftOn, markedRightOn));
         return this;
     }
 
-    public SelectBuilder groupBy(String... groupByItems) {
-        if (this.groupByList == null)
-            this.groupByList = new ArrayList<>();
-
-        this.groupByList.addAll(Arrays.asList(groupByItems));
+    public SelectBuilder where(String columnMarkdown, Comparison comparison, Object value) {
+        conditionsTracker.addCondition(columnMarkdown, comparison, value);
         return this;
     }
 
-    /**
-     * Method for building the LIMIT clause.
-     *
-     * @param value Value of the limit.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder limit(Long value) {
-        this.limit = value;
+    public SelectBuilder where(ConditionSignature... conditions) {
+        conditionsTracker.addConditions(conditions);
         return this;
     }
 
-    /**
-     * Method for building OFFSET clause.
-     *
-     * @param value Value of the offset.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder offset(Long value) {
-        this.offset = value;
-        return this;
-    }
-
-    /**
-     * Method for defining if want the SelectBuilder to build the query with alias on the columns.
-     *
-     * @param flag Value of the flag.
-     * @return This instance of SelectBuilder.
-     */
-    public SelectBuilder withAlias(boolean flag) {
-        this.withAlias = flag;
-        return this;
-    }
-
-    /**
-     * Method for generating the SQL statement.
-     *
-     * @return SQL Statement String.
-     */
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        boolean hasFields = fields != null && fields.size() > 0;
-        boolean hasUnionAllFrom = unionAllFrom != null && unionAllFrom.size() > 0;
-        boolean hasFromSelectBuilders = fromSelectBuilders != null && fromSelectBuilders.size() > 0;
-        boolean hasAggregations = aggregations != null && aggregations.size() > 0;
-        boolean hasDistinct = distinctList != null && distinctList.size() > 0;
-        boolean hasFunctions = functions != null && functions.size() > 0;
-
-        if (hasFields) {
-            for (int i = 0; i < this.fields.size(); i++) {
-                if (ColumnHelper.hasTableName(this.fields.get(i)) &&
-                        !ColumnHelper.isAll(this.fields.get(i)) &&
-                        this.withAlias) {
-                    String newField = this.fields.get(i) + STRING_AS + ColumnHelper.columnAlias(this.fields.get(i));
-                    this.fields.set(i, newField);
-                }
-            }
+        if (this.alias != null) {
+            stringBuilder.append(CommonStrings.OPEN_PARENTHESES);
         }
 
-        stringBuilder.append(STRING_SELECT);
+        stringBuilder.append(CommonStrings.SELECT);
+        stringBuilder.append(this.selectTracker.build());
 
-        if (hasFunctions) {
-            for (int i = 0; i < functions.size(); i++) {
-                Function function = functions.get(i);
-
-                stringBuilder.append(function.getName());
-                if (function.getParameters() != null && function.getParameters().getParametersList().size() > 0) {
-                    stringBuilder.append(STRING_OPEN_PARENTHESES.trim());
-                    for (int j = 0; j < function.getParameters().getParametersList().size(); j++) {
-                        String parameter = function.getParameters().getParametersList().get(j);
-                        stringBuilder.append(parameter);
-                        if (j != function.getParameters().getParametersList().size() - 1)
-                            stringBuilder.append(STRING_COMMA);
-                    }
-                    stringBuilder.append(STRING_CLOSE_PARENTHESES.trim()).append(STRING_SPACE);
-                }
-
-                if (function.getAlias() != null) {
-                    stringBuilder.append(STRING_AS).append(function.getAlias());
-                }
-
-                if (i != functions.size() - 1) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-
-            if (hasFields || hasAggregations || hasDistinct) {
-                stringBuilder.append(STRING_COMMA);
-            }
+        if (this.fromTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.FROM);
+            stringBuilder.append(this.fromTracker.build());
         }
 
-        if (hasDistinct) {
-            for (int i = 0; i < distinctList.size(); i++) {
-                stringBuilder.append(STRING_DISTINCT);
-                stringBuilder.append(distinctList.get(i));
-                stringBuilder.append(STRING_AS).append(ColumnHelper.columnAlias(distinctList.get(i)));
-                if (i != distinctList.size() - 1) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-
-            if (hasAggregations || hasFields) {
-                stringBuilder.append(STRING_COMMA);
-            }
+        if (this.joinTracker.shouldBuild()) {
+            stringBuilder.append(this.joinTracker.build());
         }
 
-        if (hasFields) {
-            ListHelpers.runListIterator(stringBuilder, fields.listIterator(), STRING_COMMA);
-            if (hasAggregations)
-                stringBuilder.append(STRING_COMMA);
+        if (this.conditionsTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.WHERE);
+            stringBuilder.append(this.conditionsTracker.build());
         }
 
-        if (hasAggregations) {
-            for (int i = 0; i < aggregations.size(); i++) {
-                Aggregation aggregation = aggregations.get(i);
-
-                stringBuilder.append(aggregation.getAggregationType().getCommand()).append(STRING_OPEN_PARENTHESES.trim());
-                stringBuilder.append(aggregation.getColumnName());
-                stringBuilder.append(STRING_CLOSE_PARENTHESES.trim()).append(STRING_AS);
-                stringBuilder.append(aggregation.getAggregationType().getCommand().toLowerCase()).append(STRING_UNDERLINE).append(ColumnHelper.columnAlias(aggregation.getColumnName()));
-
-                if (i != aggregations.size() - 1) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
+        if (this.alias != null) {
+            stringBuilder.append(CommonStrings.CLOSE_PARENTHESES);
+            stringBuilder.append(CommonStrings.AS).append(this.alias);
         }
 
-        stringBuilder.append(STRING_FROM);
-        if (tablesAndPrefixes != null) {
-            ListHelpers.runListIterator(stringBuilder, tablesAndPrefixes.listIterator(), STRING_COMMA);
-            if (hasUnionAllFrom || hasFromSelectBuilders) {
-                stringBuilder.append(STRING_COMMA);
-            }
+        if (" ".equals(String.valueOf(stringBuilder.charAt(0)))) {
+            stringBuilder.deleteCharAt(0);
         }
 
-        if (hasFromSelectBuilders) {
-            for (SelectBuilder selectBuilder : fromSelectBuilders) {
-                stringBuilder.append(" ( ");
-                stringBuilder.append(selectBuilder.build());
-                stringBuilder.append(" ) ");
-                if (selectBuilder.getAlias() != null) {
-                    stringBuilder.append(" AS ").append(selectBuilder.getAlias());
-                }
-            }
-
-            if (hasUnionAllFrom) {
-                stringBuilder.append(STRING_COMMA);
-            }
+        if (" ".equals(String.valueOf(stringBuilder.charAt(stringBuilder.length() - 1)))) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
 
-        if (hasUnionAllFrom) {
-            for (UnionAll unionAll : unionAllFrom) {
-                stringBuilder.append(" ( ");
-                for (int j = 0; j < unionAll.getSelectBuilderList().size(); j++) {
-                    stringBuilder.append(" ( ");
-                    SelectBuilder selectBuilder = unionAll.getSelectBuilderList().get(j);
-                    stringBuilder.append(selectBuilder.build());
-                    stringBuilder.append(" ) ");
-                    if (selectBuilder.getAlias() != null) {
-                        stringBuilder.append(" AS ").append(selectBuilder.getAlias());
-                    }
-                    if (j < unionAll.getSelectBuilderList().size() - 1)
-                        stringBuilder.append(" UNION ALL ");
-                }
-                stringBuilder.append(" ) as ").append(unionAll.getAlias());
-            }
-        }
-
-        if (joins != null && joins.size() > 0) {
-            List<String> joinStrings = joins.stream().map(join -> join.type + " " + join.tableAndPrefix + STRING_ON + join.joinOn).collect(Collectors.toList());
-            ListHelpers.runListIterator(stringBuilder, joinStrings.listIterator(), null);
-        }
-
-        if (this.conditionBase != null) {
-            stringBuilder.append(STRING_WHERE);
-            ColumnHelper.runNestedConditions(stringBuilder, conditionBase);
-        }
-
-        if (groupByList != null) {
-            stringBuilder.append(STRING_GROUP_BY);
-            for (int i = 0; i < groupByList.size(); i++) {
-                String item = groupByList.get(i);
-                if (i < groupByList.size() - 1) {
-                    stringBuilder.append(ColumnHelper.columnAlias(item)).append(STRING_COMMA);
-                } else {
-                    stringBuilder.append(ColumnHelper.columnAlias(item));
-                }
-
-            }
-//            stringBuilder.append(STRING_GROUP_BY).append(STRING_OPEN_PARENTHESES).append(ColumnHelper.columnAlias(groupBy)).append(STRING_CLOSE_PARENTHESES);
-            // Multiple fields with parentheses error reported
-        }
-
-        if (this.orders != null && this.orders.size() > 0) {
-            stringBuilder.append(STRING_ORDER_BY);
-            for (int i = 0; i < this.orders.size(); i++) {
-                stringBuilder
-                        .append(this.orders.get(i).getField())
-                        .append(this.orders.get(i).getType().getValue());
-                if (!(i == this.orders.size() - 1)) {
-                    stringBuilder.append(STRING_COMMA);
-                }
-            }
-        }
-
-        if (limit != null) {
-            stringBuilder.append(STRING_LIMIT).append(limit).append(STRING_SPACE);
-        }
-
-        if (offset != null) {
-            stringBuilder.append(STRING_OFFSET).append(offset).append(STRING_SPACE);
-        }
-
-        return stringBuilder.toString().trim().replaceAll(" +", STRING_SPACE);
+        return stringBuilder.toString().replaceAll("\\s+", " ");
     }
-
-    // Getters and Setters
-
 
     public String getAlias() {
         return alias;

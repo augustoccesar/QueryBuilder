@@ -1,6 +1,5 @@
-
-.idea
 .gradle
+.idea
 *.iml
 build
 out

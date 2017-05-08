@@ -1,47 +1,14 @@
 package br.com.augustoccesar.querybuilder.query;
 
+import br.com.augustoccesar.querybuilder.builders.Buildable;
+import br.com.augustoccesar.querybuilder.constants.CommonStrings;
+
+import java.util.Arrays;
+
 /**
  * Created by augustoccesar on 6/2/16.
  */
-public class Join {
-    public String type;
-    public String tableAndPrefix;
-    public String joinOn;
-
-    // Constructors
-
-    public Join(Type type) {
-        this.type = type.getValue();
-    }
-
-    public Join(Type type, String tableAndPrefix, String joinOn) {
-        this.type = type.getValue();
-        this.tableAndPrefix = tableAndPrefix;
-        this.joinOn = joinOn;
-    }
-
-    // Builders
-
-    public static Join build(Type type) {
-        return new Join(type);
-    }
-
-    public static Join build(Type type, String tableAndPrefix, String joinOn) {
-        return new Join(type, tableAndPrefix, joinOn);
-    }
-
-    // Readable methods
-
-    public Join table(String tableAndPrefix) {
-        this.tableAndPrefix = tableAndPrefix;
-        return this;
-    }
-
-    public Join on(String joinOn) {
-        this.joinOn = joinOn;
-        return this;
-    }
-
+public class Join implements Buildable {
     public enum Type {
         LEFT_JOIN("LEFT JOIN"),
         RIGHT_JOIN("RIGHT JOIN"),
@@ -56,5 +23,74 @@ public class Join {
         public String getValue() {
             return value;
         }
+    }
+
+    private Type type;
+    private Table table;
+    private Column leftJoinOn;
+    private Column rightJoinOn;
+
+    public static final Type INNER = Type.INNER_JOIN;
+    public static final Type LEFT = Type.LEFT_JOIN;
+    public static final Type RIGHT = Type.RIGHT_JOIN;
+
+    // Constructors
+
+    public Join(Type type) {
+        this.type = type;
+    }
+
+    public Join(Type type, String tableOrTableMarkdown, String joinOn) {
+        this.type = type;
+        this.table = Table.fromMarkdown(tableOrTableMarkdown);
+        this.splitJoinOn(joinOn);
+    }
+
+    public Join(Type type, String tableOrTableMarkdown, String leftJoinOn, String rightJoinOn) {
+        this.type = type;
+        this.table = Table.fromMarkdown(tableOrTableMarkdown);
+        this.leftJoinOn = Column.fromMarkdown(leftJoinOn);
+        this.rightJoinOn = Column.fromMarkdown(rightJoinOn);
+    }
+
+    // Builder
+
+    public Join table(String tableOrTableMarkdown) {
+        this.table = Table.fromMarkdown(tableOrTableMarkdown);
+        return this;
+    }
+
+    public Join on(String joinOn){
+        this.splitJoinOn(joinOn);
+        return this;
+    }
+
+    public Join on(String leftJoinOn, String rightJoinOn) {
+        this.leftJoinOn = Column.fromMarkdown(leftJoinOn);
+        this.rightJoinOn = Column.fromMarkdown(rightJoinOn);
+        return this;
+    }
+
+    // Helpers
+
+    private void splitJoinOn(String joinOn){
+        String[] result = joinOn.split("=");
+        Arrays.asList(result).forEach((s) -> s = s.replace(" ", ""));
+
+        this.leftJoinOn = Column.fromMarkdown(result[0].replace(" ", ""));
+        this.rightJoinOn = Column.fromMarkdown(result[1].replace(" ", ""));
+    }
+
+    @Override
+    public String build() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(" ")
+                .append(this.type.value).append(" ")
+                .append(this.table.build()).append(CommonStrings.ON)
+                .append(this.leftJoinOn.build(false, false)).append(Comparison.EQUALS.getValue()).append(this.rightJoinOn.build(false, false))
+                .append(" ");
+
+        return stringBuilder.toString().replaceAll("\\s+", " ");
     }
 }
