@@ -22,10 +22,16 @@ public class ConditionsTracker implements Buildable{
 
     public void addConditions(ConditionSignature... conditions) {
         Arrays.asList(conditions).forEach((cond) -> this.baseConditionGroup.add(cond));
+        this.baseConditionGroup.generateMetadata();
     }
 
     @Override
     public String build() {
         return this.baseConditionGroup.build();
+    }
+
+    @Override
+    public boolean shouldBuild() {
+        return this.baseConditionGroup.getConditionsAndLinks().size() > 0;
     }
 }

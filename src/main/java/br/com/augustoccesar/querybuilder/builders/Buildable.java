@@ -6,6 +6,9 @@ package br.com.augustoccesar.querybuilder.builders;
 public interface Buildable {
     // TODO rethink this approach
     String build();
+
+    default boolean shouldBuild() { return true; }
+
     default String build(boolean withDistinct, boolean withAlias) {
         return null;
     }

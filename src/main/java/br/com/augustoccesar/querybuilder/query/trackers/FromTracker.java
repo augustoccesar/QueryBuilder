@@ -37,4 +37,9 @@ public class FromTracker implements Buildable {
 
         return stringBuilder.toString().replaceAll("\\s+", " ");
     }
+
+    @Override
+    public boolean shouldBuild() {
+        return this.tables.size() > 0;
+    }
 }

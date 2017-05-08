@@ -44,4 +44,9 @@ public class SelectTracker implements Buildable {
 
         return stringBuilder.toString().replaceAll("\\s+", " ");
     }
+
+    @Override
+    public boolean shouldBuild() {
+        return this.columns.size() > 0 || this.selectBuilders.size() > 0;
+    }
 }

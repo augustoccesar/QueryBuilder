@@ -1,5 +1,6 @@
 package br.com.augustoccesar.querybuilder.builders;
 
+import br.com.augustoccesar.querybuilder.constants.CommonStrings;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
@@ -84,9 +85,42 @@ public class SelectBuilder implements Buildable {
 
     @Override
     public String build() {
-        if(this.alias != null){
-            // TODO wrap around parenthesis
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (this.alias != null) {
+            stringBuilder.append(CommonStrings.OPEN_PARENTHESES);
         }
-        return null;
+
+        stringBuilder.append(CommonStrings.SELECT);
+        stringBuilder.append(this.selectTracker.build());
+
+        if (this.fromTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.FROM);
+            stringBuilder.append(this.fromTracker.build());
+        }
+
+        if (this.joinTracker.shouldBuild()) {
+            stringBuilder.append(this.joinTracker.build());
+        }
+
+        if (this.conditionsTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.WHERE);
+            stringBuilder.append(this.conditionsTracker.build());
+        }
+
+        if (this.alias != null) {
+            stringBuilder.append(CommonStrings.CLOSE_PARENTHESES);
+            stringBuilder.append(CommonStrings.AS).append(this.alias);
+        }
+
+        if (" ".equals(String.valueOf(stringBuilder.charAt(0)))) {
+            stringBuilder.deleteCharAt(0);
+        }
+
+        if (" ".equals(String.valueOf(stringBuilder.charAt(stringBuilder.length() - 1)))) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+
+        return stringBuilder.toString().replaceAll("\\s+", " ");
     }
 }

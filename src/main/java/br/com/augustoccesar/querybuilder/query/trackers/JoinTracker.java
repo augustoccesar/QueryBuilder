@@ -33,4 +33,9 @@ public class JoinTracker implements Buildable {
 
         return stringBuilder.toString().replaceAll("\\s+", " ");
     }
+
+    @Override
+    public boolean shouldBuild() {
+        return this.joins.size() > 0;
+    }
 }

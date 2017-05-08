@@ -33,7 +33,7 @@ public class ConditionGroup extends ConditionSignature implements Buildable {
 
     public void generateMetadata() {
         this.conditionsAndLinks.forEach((item) -> {
-            if (item instanceof ConditionGroup) {
+            if (item instanceof ConditionGroup && item != conditionsAndLinks.get(0)) {
                 ((ConditionGroup) item).setNested(true);
                 ((ConditionGroup) item).generateMetadata();
             }
