@@ -5,11 +5,8 @@ import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
 import br.com.augustoccesar.querybuilder.query.trackers.ConditionsTracker;
 import br.com.augustoccesar.querybuilder.query.trackers.FromTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.JoinTracker;
 import br.com.augustoccesar.querybuilder.query.trackers.SelectTracker;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by augustoccesar on 6/13/16.
@@ -19,10 +16,10 @@ public class SelectBuilder implements Buildable {
      * Attributes
      */
     private String alias;
-    private List<Join> joins;
 
     private SelectTracker selectTracker = new SelectTracker();
     private FromTracker fromTracker = new FromTracker();
+    private JoinTracker joinTracker = new JoinTracker();
     private ConditionsTracker conditionsTracker = new ConditionsTracker();
 
     /**
@@ -51,18 +48,27 @@ public class SelectBuilder implements Buildable {
     }
 
     public SelectBuilder join(Join join) {
-        if (this.joins == null)
-            this.joins = new ArrayList<>();
-
-        this.joins.add(join);
+        this.joinTracker.addJoin(join);
         return this;
     }
 
     public SelectBuilder joins(Join... joins) {
-        if (this.joins == null)
-            this.joins = new ArrayList<>();
+        this.joinTracker.addJoins(joins);
+        return this;
+    }
 
-        Collections.addAll(this.joins, joins);
+    public SelectBuilder innerJoin(String markedTable, String markedLeftOn, String markedRightOn) {
+        this.joinTracker.addJoin(new Join(Join.INNER, markedTable, markedLeftOn, markedRightOn));
+        return this;
+    }
+
+    public SelectBuilder leftJoin(String markedTable, String markedLeftOn, String markedRightOn) {
+        this.joinTracker.addJoin(new Join(Join.LEFT, markedTable, markedLeftOn, markedRightOn));
+        return this;
+    }
+
+    public SelectBuilder rightJoin(String markedTable, String markedLeftOn, String markedRightOn) {
+        this.joinTracker.addJoin(new Join(Join.RIGHT, markedTable, markedLeftOn, markedRightOn));
         return this;
     }
 

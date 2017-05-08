@@ -117,7 +117,7 @@ public class Column implements Buildable{
             stringBuilder.append(CommonStrings.AS).append(this.alias);
         }
 
-        return stringBuilder.toString();
+        return stringBuilder.toString().replaceAll("\\s+", " ");
     }
 
     @Override
@@ -138,6 +138,6 @@ public class Column implements Buildable{
             stringBuilder.append(CommonStrings.AS).append(this.alias);
         }
 
-        return stringBuilder.toString();
+        return stringBuilder.toString().replaceAll("\\s+", " ");
     }
 }
