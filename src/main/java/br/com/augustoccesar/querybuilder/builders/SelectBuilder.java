@@ -1,14 +1,13 @@
 package br.com.augustoccesar.querybuilder.builders;
 
-import br.com.augustoccesar.querybuilder.query.Column;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
 import br.com.augustoccesar.querybuilder.query.trackers.ConditionsTracker;
 import br.com.augustoccesar.querybuilder.query.trackers.FromTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.SelectTracker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,9 +19,9 @@ public class SelectBuilder implements Buildable {
      * Attributes
      */
     private String alias;
-    private List<Column> columns;
     private List<Join> joins;
 
+    private SelectTracker selectTracker = new SelectTracker();
     private FromTracker fromTracker = new FromTracker();
     private ConditionsTracker conditionsTracker = new ConditionsTracker();
 
@@ -42,16 +41,7 @@ public class SelectBuilder implements Buildable {
     }
 
     public SelectBuilder select(Object... fields) {
-        Arrays.asList(fields).forEach((field) -> {
-            if (field instanceof String) {
-                if (this.columns == null) {
-                    this.columns = new ArrayList<>();
-                }
-
-                this.columns.add(Column.fromMarkdown(field.toString()));
-            }
-        });
-
+        this.selectTracker.addSelect(fields);
         return this;
     }
 
