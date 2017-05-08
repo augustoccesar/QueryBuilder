@@ -123,4 +123,8 @@ public class SelectBuilder implements Buildable {
 
         return stringBuilder.toString().replaceAll("\\s+", " ");
     }
+
+    public String getAlias() {
+        return alias;
+    }
 }
