@@ -3,7 +3,7 @@ package br.com.augustoccesar.querybuilder.query;
 /**
  * Created by augustoccesar on 6/2/16.
  */
-public enum Comparisons {
+public enum Comparison {
     EQUALS(" = "),
     IN(" IN "),
     IS_NULL(" IS NULL "),
@@ -19,7 +19,7 @@ public enum Comparisons {
 
     private final String value;
 
-    Comparisons(String value) {
+    Comparison(String value) {
         this.value = value;
     }
 

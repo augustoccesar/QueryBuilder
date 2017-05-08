@@ -1,10 +1,5 @@
 package br.com.augustoccesar.querybuilder;
 
-import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
-import br.com.augustoccesar.querybuilder.query.Condition;
-import br.com.augustoccesar.querybuilder.query.Join;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 /**

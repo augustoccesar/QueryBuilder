@@ -1,5 +1,7 @@
 package br.com.augustoccesar.querybuilder.query;
 
+import br.com.augustoccesar.querybuilder.builders.Buildable;
+import br.com.augustoccesar.querybuilder.constants.CommonStrings;
 import br.com.augustoccesar.querybuilder.exceptions.InvalidPattern;
 
 import java.util.regex.Matcher;
@@ -8,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Created by augustoccesar on 8/9/16.
  */
-public class Column {
+public class Column implements Buildable{
     private String prefix;
     private String name;
     private String alias;
@@ -95,5 +97,47 @@ public class Column {
 
     public boolean isDistinct() {
         return distinct;
+    }
+
+    @Override
+    public String build() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if(this.distinct) {
+            stringBuilder.append(CommonStrings.DISTINCT);
+        }
+
+        if(this.prefix != null){
+            stringBuilder.append(this.prefix).append(".");
+        }
+
+        stringBuilder.append(this.name);
+
+        if(this.alias != null){
+            stringBuilder.append(CommonStrings.AS).append(this.alias);
+        }
+
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public String build(boolean withDistinct, boolean withAlias) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if(withDistinct) {
+            stringBuilder.append(CommonStrings.DISTINCT);
+        }
+
+        if(this.prefix != null){
+            stringBuilder.append(this.prefix).append(".");
+        }
+
+        stringBuilder.append(this.name);
+
+        if(withAlias){
+            stringBuilder.append(CommonStrings.AS).append(this.alias);
+        }
+
+        return stringBuilder.toString();
     }
 }
