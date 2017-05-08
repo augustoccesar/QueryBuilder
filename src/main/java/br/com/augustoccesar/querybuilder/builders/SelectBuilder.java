@@ -3,9 +3,8 @@ package br.com.augustoccesar.querybuilder.builders;
 import br.com.augustoccesar.querybuilder.query.Column;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
-import br.com.augustoccesar.querybuilder.query.Table;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
-import br.com.augustoccesar.querybuilder.query.conditions.ConditionsTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.ConditionsTracker;
 import br.com.augustoccesar.querybuilder.query.trackers.FromTracker;
 
 import java.util.ArrayList;

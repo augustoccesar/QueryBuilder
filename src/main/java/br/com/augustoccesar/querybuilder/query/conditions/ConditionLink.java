@@ -4,7 +4,7 @@ package br.com.augustoccesar.querybuilder.query.conditions;
  * Author: augustoccesar
  * Date: 05/05/17
  */
-enum ConditionLink {
+public enum ConditionLink {
     AND(" AND "),
     OR(" OR ");
 

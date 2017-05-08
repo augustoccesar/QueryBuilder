@@ -1,8 +1,11 @@
-package br.com.augustoccesar.querybuilder.query.conditions;
+package br.com.augustoccesar.querybuilder.query.trackers;
 
 import br.com.augustoccesar.querybuilder.builders.Buildable;
 import br.com.augustoccesar.querybuilder.query.Column;
 import br.com.augustoccesar.querybuilder.query.Comparison;
+import br.com.augustoccesar.querybuilder.query.conditions.Condition;
+import br.com.augustoccesar.querybuilder.query.conditions.ConditionGroup;
+import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
 
 import java.util.Arrays;
 

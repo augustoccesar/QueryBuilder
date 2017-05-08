@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by augustoccesar on 4/29/16.
  */
-class Condition extends ConditionSignature implements Buildable {
+public class Condition extends ConditionSignature implements Buildable {
     private Column column;
     private Comparison comparison;
     private Object value;

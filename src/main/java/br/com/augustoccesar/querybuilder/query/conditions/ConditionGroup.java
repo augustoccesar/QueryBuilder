@@ -10,7 +10,7 @@ import java.util.List;
  * Author: augustoccesar
  * Date: 05/05/17
  */
-class ConditionGroup extends ConditionSignature implements Buildable {
+public class ConditionGroup extends ConditionSignature implements Buildable {
     private boolean nested = false;
     private List<Object> conditionsAndLinks = new ArrayList<>();
 
