@@ -3,8 +3,10 @@ package br.com.augustoccesar.querybuilder.builders;
 import br.com.augustoccesar.querybuilder.query.Column;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
+import br.com.augustoccesar.querybuilder.query.Table;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionsTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.FromTracker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +24,8 @@ public class SelectBuilder implements Buildable {
     private List<Column> columns;
     private List<Join> joins;
 
-    private ConditionsTracker conditionsTracker;
+    private FromTracker fromTracker = new FromTracker();
+    private ConditionsTracker conditionsTracker = new ConditionsTracker();
 
     /**
      * Constructors
@@ -50,6 +53,11 @@ public class SelectBuilder implements Buildable {
             }
         });
 
+        return this;
+    }
+
+    public SelectBuilder from(String... fromTables) {
+        this.fromTracker.addMarkedTables(fromTables);
         return this;
     }
 

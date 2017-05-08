@@ -1,7 +1,10 @@
 package br.com.augustoccesar.querybuilder.query;
 
+import br.com.augustoccesar.querybuilder.builders.Buildable;
 import br.com.augustoccesar.querybuilder.exceptions.InvalidPattern;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +12,7 @@ import java.util.regex.Pattern;
  * Author: augustoccesar
  * Date: 04/05/17
  */
-public class Table {
+public class Table implements Buildable {
     private String name;
     private String alias;
 
@@ -50,6 +53,12 @@ public class Table {
         }
     }
 
+    public static ArrayList<Table> multipleFromMarkdown(String... markedStrings) {
+        ArrayList<Table> response = new ArrayList<>();
+        Arrays.asList(markedStrings).forEach((markedString) -> response.add(fromMarkdown(markedString)));
+        return response;
+    }
+
     // Getters and Setters
 
     public String getName() {
@@ -58,5 +67,32 @@ public class Table {
 
     public String getAlias() {
         return alias;
+    }
+
+    @Override
+    public String build() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(" ").append(this.name).append(" ");
+
+        if(this.alias != null){
+            stringBuilder.append(this.alias).append(" ");
+        }
+
+        return stringBuilder.toString().replaceAll("\\s+", " ");
+    }
+
+    public String build(boolean withAlias) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(" ").append(this.name).append(" ");
+
+        if(withAlias){
+            if(this.alias != null) {
+                stringBuilder.append(this.alias);
+            }
+        }
+
+        return stringBuilder.toString().replaceAll("\\s+", " ");
     }
 }
