@@ -37,7 +37,7 @@ public class Table {
             String name = matcherMarkdown.group(1);
             String alias = matcherMarkdown.group(2);
 
-            alias = alias.equals("_") ? null : alias;
+            alias = "_".equals(alias) ? null : alias;
 
             return new Table(name, alias);
         } else if (matcherPlain.matches()) {

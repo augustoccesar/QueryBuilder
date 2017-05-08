@@ -56,7 +56,7 @@ public class Column implements Buildable{
                 distinct = true;
             }
 
-            if(prefix.equals("_")){
+            if("_".equals(prefix)){
                 return new Column(name, distinct);
             }else {
                 return new Column(prefix, name, distinct);
@@ -67,8 +67,8 @@ public class Column implements Buildable{
             String customAlias = fullMarkdownMatcher.group(3);
             boolean distinct = false;
 
-            prefix = prefix.equals("_") ? null : prefix;
-            customAlias = customAlias.equals("_") ? null : customAlias;
+            prefix = "_".equals(prefix) ? null : prefix;
+            customAlias = "_".equals(customAlias) ? null : customAlias;
 
             if (name.contains("*")){
                 name = name.replace("*", "");

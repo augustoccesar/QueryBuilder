@@ -1,7 +1,5 @@
 package br.com.augustoccesar.querybuilder;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * Author: augustoccesar
  * Date: 03/05/17

@@ -81,7 +81,9 @@ public class SelectBuilder implements Buildable {
 
     @Override
     public String build() {
-        StringBuilder stringBuilder = new StringBuilder();
+        if(this.alias != null){
+            // TODO wrap around parenthesis
+        }
         return null;
     }
 }

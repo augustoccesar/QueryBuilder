@@ -14,9 +14,6 @@ class ConditionGroup extends ConditionSignature implements Buildable {
     private boolean nested = false;
     private List<Object> conditionsAndLinks = new ArrayList<>();
 
-    public ConditionGroup() {
-    }
-
     public void add(ConditionSignature conditionSignature) {
         if (this.conditionsAndLinks.size() == 0) {
             this.conditionsAndLinks.add(conditionSignature);
