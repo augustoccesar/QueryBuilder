@@ -52,14 +52,14 @@ public class ConditionGroup extends ConditionSignature implements Buildable {
             } else if (item instanceof ConditionGroup) {
                 ConditionGroup cg = (ConditionGroup) item;
 
-                // TODO Rethink to not check for isNested twice
-                if (cg.isNested())
-                    builder.append(CommonStrings.OPEN_PARENTHESES);
+                if (cg.isNested()) {
+                    builder.append(CommonStrings.OPEN_PARENTHESES)
+                            .append(cg.build())
+                            .append(CommonStrings.CLOSE_PARENTHESES);
 
-                builder.append(cg.build());
-
-                if (cg.isNested())
-                    builder.append(CommonStrings.CLOSE_PARENTHESES);
+                }else{
+                    builder.append(cg.build());
+                }
             }
         });
 
