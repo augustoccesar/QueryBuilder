@@ -1,4 +1,7 @@
 # QueryBuilder
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f203baba091846e3922fabf893f569e6)](https://www.codacy.com/app/augustoccesar/QueryBuilder?utm_source=github.com&utm_medium=referral&utm_content=augustoccesar/QueryBuilder&utm_campaign=badger)
+
 Simple helper to build SQL.
 
 ## Configuration
