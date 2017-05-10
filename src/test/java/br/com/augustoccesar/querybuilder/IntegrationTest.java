@@ -285,4 +285,18 @@ public class IntegrationTest {
 
         assertEquals(expected, selectBuilder.build());
     }
+
+    @Test
+    public void shouldSetLimit() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}")
+                .limit(5);
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u LIMIT 5";
+
+        assertEquals(expected, selectBuilder.build());
+    }
 }

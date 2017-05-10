@@ -21,6 +21,7 @@ public class SelectBuilder implements Buildable {
     private JoinTracker joinTracker = new JoinTracker();
     private ConditionsTracker conditionsTracker = new ConditionsTracker();
     private OrderTracker orderTracker = new OrderTracker();
+    private LimitTracker limitTracker = new LimitTracker();
 
     /**
      * Constructors
@@ -92,6 +93,11 @@ public class SelectBuilder implements Buildable {
         return this;
     }
 
+    public SelectBuilder limit(int value) {
+        limitTracker.setLimit(value);
+        return this;
+    }
+
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -120,6 +126,11 @@ public class SelectBuilder implements Buildable {
         if (this.orderTracker.shouldBuild()) {
             stringBuilder.append(CommonStrings.ORDER_BY);
             stringBuilder.append(this.orderTracker.build());
+        }
+
+        if (limitTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.LIMIT);
+            stringBuilder.append(this.limitTracker.build());
         }
 
         if (this.alias != null) {
