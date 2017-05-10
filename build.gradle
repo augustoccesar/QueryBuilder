@@ -1,3 +1,10 @@
+plugins {
+    id 'net.saliman.cobertura' version '2.3.1'
+    id 'com.github.kt3k.coveralls' version '2.7.0'
+}
+
+cobertura.coverageFormats = ['html', 'xml']
+
 apply plugin: 'idea'
 apply plugin: 'java'
 
@@ -8,9 +15,4 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-}
-
-plugins {
-    id 'net.saliman.cobertura' version '2.3.1'
-    id 'com.github.kt3k.coveralls' version '2.7.0'
 }
