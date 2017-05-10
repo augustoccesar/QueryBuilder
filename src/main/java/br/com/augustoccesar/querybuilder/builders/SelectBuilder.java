@@ -3,11 +3,9 @@ package br.com.augustoccesar.querybuilder.builders;
 import br.com.augustoccesar.querybuilder.constants.CommonStrings;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
+import br.com.augustoccesar.querybuilder.query.Order;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
-import br.com.augustoccesar.querybuilder.query.trackers.ConditionsTracker;
-import br.com.augustoccesar.querybuilder.query.trackers.FromTracker;
-import br.com.augustoccesar.querybuilder.query.trackers.JoinTracker;
-import br.com.augustoccesar.querybuilder.query.trackers.SelectTracker;
+import br.com.augustoccesar.querybuilder.query.trackers.*;
 
 /**
  * Created by augustoccesar on 6/13/16.
@@ -22,6 +20,7 @@ public class SelectBuilder implements Buildable {
     private FromTracker fromTracker = new FromTracker();
     private JoinTracker joinTracker = new JoinTracker();
     private ConditionsTracker conditionsTracker = new ConditionsTracker();
+    private OrderTracker orderTracker = new OrderTracker();
 
     /**
      * Constructors
@@ -83,6 +82,16 @@ public class SelectBuilder implements Buildable {
         return this;
     }
 
+    public SelectBuilder order(Order order) {
+        orderTracker.addOrder(order);
+        return this;
+    }
+
+    public SelectBuilder orders(Order... orders) {
+        orderTracker.addOrders(orders);
+        return this;
+    }
+
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -108,10 +117,17 @@ public class SelectBuilder implements Buildable {
             stringBuilder.append(this.conditionsTracker.build());
         }
 
+        if (this.orderTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.ORDER_BY);
+            stringBuilder.append(this.orderTracker.build());
+        }
+
         if (this.alias != null) {
             stringBuilder.append(CommonStrings.CLOSE_PARENTHESES);
             stringBuilder.append(CommonStrings.AS).append(this.alias);
         }
+
+        // Remove unnecessary spaces
 
         if (" ".equals(String.valueOf(stringBuilder.charAt(0)))) {
             stringBuilder.deleteCharAt(0);

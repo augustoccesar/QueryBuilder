@@ -3,6 +3,7 @@ package br.com.augustoccesar.querybuilder;
 import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
+import br.com.augustoccesar.querybuilder.query.Order;
 import br.com.augustoccesar.querybuilder.query.conditions.Condition;
 import org.junit.Test;
 
@@ -250,6 +251,37 @@ public class IntegrationTest {
                 );
 
         String expected = "SELECT u.name AS u_name FROM users u WHERE u.name = 'Augusto' AND u.age >= 21 AND ( u.nationality = 'Brazilian' OR u.nationality = 'Italian' )";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBeAbleToSetOrder() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}")
+                .order(Order.by("{u}id", Order.ASC));
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u ORDER BY u.id ASC";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBeAbleToSetMultipleOrders() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}")
+                .orders(
+                        Order.by("{u}id", Order.ASC),
+                        Order.by("{u}name", Order.DESC)
+                );
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u ORDER BY u.id ASC , u.name DESC";
 
         assertEquals(expected, selectBuilder.build());
     }
