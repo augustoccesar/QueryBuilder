@@ -20,4 +20,6 @@ public class CommonStrings {
     public static final String GROUP_BY = " GROUP BY ";
     public static final String ORDER_BY = " ORDER BY ";
     public static final String DISTINCT = " DISTINCT ";
+    public static final String UNION = " UNION ";
+    public static final String UNION_ALL = " UNION ALL ";
 }

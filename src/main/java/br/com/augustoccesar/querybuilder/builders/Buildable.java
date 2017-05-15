@@ -8,8 +8,4 @@ public interface Buildable {
     String build();
 
     default boolean shouldBuild() { return true; }
-
-    default String build(boolean withDistinct, boolean withAlias) {
-        return null;
-    }
 }

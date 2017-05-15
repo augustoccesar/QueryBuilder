@@ -206,6 +206,6 @@ public class Condition extends ConditionSignature implements Buildable {
 
     @Override
     public String build() {
-        return (" " + this.column.build(false, false) + this.comparison.getValue() + this.getValueAsString() + " ").replaceAll("\\s+", " ");
+        return (" " + this.column.sqlColumnRepresentation() + this.comparison.getValue() + this.getValueAsString() + " ").replaceAll("\\s+", " ");
     }
 }

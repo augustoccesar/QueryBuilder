@@ -4,6 +4,7 @@ import br.com.augustoccesar.querybuilder.builders.Buildable;
 import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
 import br.com.augustoccesar.querybuilder.constants.CommonStrings;
 import br.com.augustoccesar.querybuilder.exceptions.InvalidSelectBuilder;
+import br.com.augustoccesar.querybuilder.query.Aggregation;
 import br.com.augustoccesar.querybuilder.query.Column;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 public class SelectTracker implements Buildable {
     private ArrayList<Column> columns = new ArrayList<>();
     private ArrayList<SelectBuilder> selectBuilders = new ArrayList<>();
+    private ArrayList<Aggregation> aggregations = new ArrayList<>();
 
     public SelectTracker addSelect(Object... selectObjects) {
         Arrays.asList(selectObjects).forEach((item) -> {
@@ -25,6 +27,8 @@ public class SelectTracker implements Buildable {
                 this.columns.add((Column) item);
             if (item instanceof SelectBuilder)
                 this.selectBuilders.add((SelectBuilder) item);
+            if (item instanceof Aggregation)
+                this.aggregations.add((Aggregation) item);
         });
 
         return this;
@@ -37,7 +41,14 @@ public class SelectTracker implements Buildable {
         stringBuilder.append(" ");
         for (int i = 0; i < this.columns.size(); i++) {
             stringBuilder.append(this.columns.get(i).build());
-            if (i < this.columns.size() - 1 && this.selectBuilders.size() == 0) {
+            if (i < this.columns.size() - 1 || this.aggregations.size() > 0 || this.selectBuilders.size() > 0) {
+                stringBuilder.append(CommonStrings.COMMA);
+            }
+        }
+
+        for (int i = 0; i < this.aggregations.size(); i++) {
+            stringBuilder.append(this.aggregations.get(i).build());
+            if (i < this.aggregations.size() - 1 || this.selectBuilders.size() > 0) {
                 stringBuilder.append(CommonStrings.COMMA);
             }
         }
@@ -45,9 +56,9 @@ public class SelectTracker implements Buildable {
         for (int i = 0; i < this.selectBuilders.size(); i++) {
             SelectBuilder sb = this.selectBuilders.get(i);
 
-            if(sb.getAlias() != null) {
+            if (sb.getAlias() != null) {
                 stringBuilder.append(this.selectBuilders.get(i).build());
-            }else{
+            } else {
                 throw new InvalidSelectBuilder("Nested SelectBuilder must have an alias.");
             }
 
@@ -63,6 +74,6 @@ public class SelectTracker implements Buildable {
 
     @Override
     public boolean shouldBuild() {
-        return this.columns.size() > 0 || this.selectBuilders.size() > 0;
+        return this.columns.size() > 0 || this.selectBuilders.size() > 0 || this.aggregations.size() > 0;
     }
 }

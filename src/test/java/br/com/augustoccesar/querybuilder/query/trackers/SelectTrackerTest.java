@@ -1,6 +1,7 @@
 package br.com.augustoccesar.querybuilder.query.trackers;
 
 import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
+import br.com.augustoccesar.querybuilder.query.Aggregation;
 import br.com.augustoccesar.querybuilder.query.Column;
 import org.junit.Test;
 
@@ -33,6 +34,32 @@ public class SelectTrackerTest {
         SelectTracker tracker = new SelectTracker().addSelect(selectBuilder);
 
         String expect = " ( SELECT u.name AS u_name FROM users u ) AS qb ";
+        assertEquals(expect, tracker.build());
+    }
+
+    @Test
+    public void shouldBuildWithColumnAndSelectBuilder() {
+        SelectBuilder selectBuilder = new SelectBuilder("qb").select("{u}name").from("users{u}");
+        Column column = new Column("u", "name", false);
+
+        SelectTracker tracker = new SelectTracker().addSelect(selectBuilder);
+        tracker.addSelect(column);
+
+        String expect = " u.name AS u_name , ( SELECT u.name AS u_name FROM users u ) AS qb ";
+        assertEquals(expect, tracker.build());
+    }
+
+    @Test
+    public void shouldBuildWithColumnAndSelectBuilderAndAggregation() {
+        SelectBuilder selectBuilder = new SelectBuilder("qb").select("{u}name").from("users{u}");
+        Column column = new Column("u", "name", false);
+        Aggregation agg = Aggregation.count("{u}id");
+
+        SelectTracker tracker = new SelectTracker().addSelect(selectBuilder);
+        tracker.addSelect(column);
+        tracker.addSelect(agg);
+
+        String expect = " u.name AS u_name , COUNT ( u.id ) AS count_u_id , ( SELECT u.name AS u_name FROM users u ) AS qb ";
         assertEquals(expect, tracker.build());
     }
 }

@@ -1,8 +1,10 @@
 package br.com.augustoccesar.querybuilder;
 
 import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
+import br.com.augustoccesar.querybuilder.query.Aggregation;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
+import br.com.augustoccesar.querybuilder.query.Order;
 import br.com.augustoccesar.querybuilder.query.conditions.Condition;
 import org.junit.Test;
 
@@ -250,6 +252,105 @@ public class IntegrationTest {
                 );
 
         String expected = "SELECT u.name AS u_name FROM users u WHERE u.name = 'Augusto' AND u.age >= 21 AND ( u.nationality = 'Brazilian' OR u.nationality = 'Italian' )";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBeAbleToSetOrder() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}")
+                .order(Order.by("{u}id", Order.ASC));
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u ORDER BY u.id ASC";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBeAbleToSetMultipleOrders() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}")
+                .orders(
+                        Order.by("{u}id", Order.ASC),
+                        Order.by("{u}name", Order.DESC)
+                );
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u ORDER BY u.id ASC , u.name DESC";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldSetLimit() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}")
+                .limit(5);
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u LIMIT 5";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldSetAggregationAndGroupBy() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name", Aggregation.count("{u}id"))
+                .from("users{u}")
+                .groupBy("{u}name");
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name , COUNT ( u.id ) AS count_u_id FROM users u GROUP BY u.name";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBuildTwoUnionAllSelectBuilders() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+        SelectBuilder selectBuilder2 = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}");
+
+        selectBuilder2
+                .select("{c}identifier", "{c}first_name")
+                .from("clients{c}");
+
+        selectBuilder.unionAll(selectBuilder2);
+
+        String expected = "( SELECT u.id AS u_id , u.name AS u_name FROM users u ) UNION ALL ( SELECT c.identifier AS c_identifier , c.first_name AS c_first_name FROM clients c )";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBuildTwoUnionSelectBuilders() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+        SelectBuilder selectBuilder2 = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}");
+
+        selectBuilder2
+                .select("{c}identifier", "{c}first_name")
+                .from("clients{c}");
+
+        selectBuilder.union(selectBuilder2);
+
+        String expected = "( SELECT u.id AS u_id , u.name AS u_name FROM users u ) UNION ( SELECT c.identifier AS c_identifier , c.first_name AS c_first_name FROM clients c )";
 
         assertEquals(expected, selectBuilder.build());
     }
