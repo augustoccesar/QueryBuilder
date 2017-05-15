@@ -127,25 +127,4 @@ public class Column implements Buildable{
 
         return stringBuilder.toString().replaceAll("\\s+", " ");
     }
-
-    @Override
-    public String build(boolean withDistinct, boolean withAlias) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if(withDistinct) {
-            stringBuilder.append(CommonStrings.DISTINCT);
-        }
-
-        if(this.prefix != null){
-            stringBuilder.append(this.prefix).append(".");
-        }
-
-        stringBuilder.append(this.name);
-
-        if(withAlias){
-            stringBuilder.append(CommonStrings.AS).append(this.alias);
-        }
-
-        return stringBuilder.toString().replaceAll("\\s+", " ");
-    }
 }

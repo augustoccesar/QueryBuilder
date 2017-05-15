@@ -88,7 +88,7 @@ public class Join implements Buildable {
         stringBuilder.append(" ")
                 .append(this.type.value).append(" ")
                 .append(this.table.build()).append(CommonStrings.ON)
-                .append(this.leftJoinOn.build(false, false)).append(Comparison.EQUALS.getValue()).append(this.rightJoinOn.build(false, false))
+                .append(this.leftJoinOn.sqlColumnRepresentation()).append(Comparison.EQUALS.getValue()).append(this.rightJoinOn.sqlColumnRepresentation())
                 .append(" ");
 
         return stringBuilder.toString().replaceAll("\\s+", " ");

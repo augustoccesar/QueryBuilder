@@ -57,7 +57,7 @@ public class Order implements Buildable{
 
     @Override
     public String build() {
-        return (" " + this.column.build(false, false) + this.type.value + " ").replaceAll("\\s+", " ");
+        return (" " + this.column.sqlColumnRepresentation() + this.type.value + " ").replaceAll("\\s+", " ");
     }
 
     // Getters and Setters
