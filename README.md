@@ -80,6 +80,43 @@ Possible [Join](#join) builders are listed in his description.
 .rigthJoin("users_profile{up}", "{u}id", "{up}user_id") // Generates 'RIGHT JOIN users_profile up ON u.id = up.user_id'
 ```
 
+#### Order ####
+
+##### `.order()` #####
+```java
+.order(Order.by("{u}id", Order.DESC))   // Generates 'ORDER BY u.id DESC'
+.order(Order.asc("{u}id"))              // Generates 'ORDER BY u.id ASC'
+.order(Order.desc("{u}id"))             // Generates 'ORDER BY u.id DESC'
+```
+
+#### Limit ####
+```java
+.limit(10) // Generates 'LIMIT 10'
+```
+
+#### Union ####
+
+##### `.union()` #####
+```java
+.union(new SelectBuilder().select("{u}id", "{u}name").from("users{u}")) // Generates 'UNION (SELECT u.id AS u_id, u.name AS u_name FROM users u)'
+```
+
+##### `.unionAll()` #####
+```java
+.unionAll(new SelectBuilder().select("{u}id", "{u}name").from("users{u}")) // Generates 'UNION ALL (SELECT u.id AS u_id, u.name AS u_name FROM users u)'
+```
+
+#### Aggregation ####
+All possible [Aggregation]() are listed in his description
+```java
+.select(Aggregation.count("{u}id")) // Generates 'COUNT (u.id) AS count_u_id'
+.select(Aggregation.count("{u}id", "custom_alias")) // Generates 'COUNT (u.id) AS custom_alias'
+```
+And the `Group By` clause constructed by
+```java
+.groupBy("{u}name") // Generates 'GROUP BY u.name'
+```
+
 Constructors
 ------------
 
@@ -142,6 +179,24 @@ Comparison.GREATER_THAN_OR_EQUALS
 Comparison.LESS_THAN
 Comparison.LESS_THAN_OR_EQUALS
 ```
+
+#### `Aggregation` ####
+Aggregations used for creating [.select()] clause aggregations.
+```java
+Aggregation.AVERAGE
+Aggregation.COUNT
+Aggregation.MAX
+Aggregation.MIN
+Aggregation.SUM
+
+Aggregation.average("{u}score") // Generates 'AVG (u.score) AS avg_u_score'
+Aggregation.count("{u}id")      // Generates 'COUNT (u.id) AS cout_u_id'
+Aggregation.max("{u}score")     // Generates 'MAX (u.score) AS max_u_score'
+Aggregation.min("{u}score")     // Generates 'MIN (u.score) AS min_u_score'
+Aggregation.sum("{u}score")     // Generates 'SUM (u.score) AS sum_u_score'
+```
+All `Aggregation` builders can have and extra parameter that is used to sed a custom alias
+to the aggregation
 
 Installation
 ------------
