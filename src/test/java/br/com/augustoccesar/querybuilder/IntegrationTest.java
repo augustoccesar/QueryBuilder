@@ -1,6 +1,7 @@
 package br.com.augustoccesar.querybuilder;
 
 import br.com.augustoccesar.querybuilder.builders.SelectBuilder;
+import br.com.augustoccesar.querybuilder.query.Aggregation;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.Order;
@@ -296,6 +297,20 @@ public class IntegrationTest {
                 .limit(5);
 
         String expected = "SELECT u.id AS u_id , u.name AS u_name FROM users u LIMIT 5";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldSetAggregationAndGroupBy() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name", Aggregation.count("{u}id"))
+                .from("users{u}")
+                .groupBy("{u}name");
+
+        String expected = "SELECT u.id AS u_id , u.name AS u_name , COUNT ( u.id ) AS count_u_id FROM users u GROUP BY u.name";
 
         assertEquals(expected, selectBuilder.build());
     }

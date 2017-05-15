@@ -22,6 +22,7 @@ public class SelectBuilder implements Buildable {
     private ConditionsTracker conditionsTracker = new ConditionsTracker();
     private OrderTracker orderTracker = new OrderTracker();
     private LimitTracker limitTracker = new LimitTracker();
+    private GroupByTracker groupByTracker = new GroupByTracker();
 
     /**
      * Constructors
@@ -98,6 +99,11 @@ public class SelectBuilder implements Buildable {
         return this;
     }
 
+    public SelectBuilder groupBy(String markedColumn) {
+        groupByTracker.setGroupByColumn(markedColumn);
+        return this;
+    }
+
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -128,10 +134,17 @@ public class SelectBuilder implements Buildable {
             stringBuilder.append(this.orderTracker.build());
         }
 
-        if (limitTracker.shouldBuild()) {
+        if (this.limitTracker.shouldBuild()) {
             stringBuilder.append(CommonStrings.LIMIT);
             stringBuilder.append(this.limitTracker.build());
         }
+
+        if (this.groupByTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.GROUP_BY);
+            stringBuilder.append(this.groupByTracker.build());
+        }
+
+        // Close with alias
 
         if (this.alias != null) {
             stringBuilder.append(CommonStrings.CLOSE_PARENTHESES);

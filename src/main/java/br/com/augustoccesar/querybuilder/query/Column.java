@@ -99,6 +99,14 @@ public class Column implements Buildable{
         return distinct;
     }
 
+    public String sqlColumnRepresentation() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if(prefix != null)
+            stringBuilder.append(prefix).append(".");
+        stringBuilder.append(name);
+        return stringBuilder.toString();
+    }
+
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
