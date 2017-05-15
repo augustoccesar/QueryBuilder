@@ -4,7 +4,6 @@ import br.com.augustoccesar.querybuilder.constants.CommonStrings;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.Order;
-import br.com.augustoccesar.querybuilder.query.Union;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
 import br.com.augustoccesar.querybuilder.query.trackers.*;
 
