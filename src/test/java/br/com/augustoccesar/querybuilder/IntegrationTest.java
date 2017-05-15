@@ -314,4 +314,44 @@ public class IntegrationTest {
 
         assertEquals(expected, selectBuilder.build());
     }
+
+    @Test
+    public void shouldBuildTwoUnionAllSelectBuilders() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+        SelectBuilder selectBuilder2 = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}");
+
+        selectBuilder2
+                .select("{c}identifier", "{c}first_name")
+                .from("clients{c}");
+
+        selectBuilder.unionAll(selectBuilder2);
+
+        String expected = "( SELECT u.id AS u_id , u.name AS u_name FROM users u ) UNION ALL ( SELECT c.identifier AS c_identifier , c.first_name AS c_first_name FROM clients c )";
+
+        assertEquals(expected, selectBuilder.build());
+    }
+
+    @Test
+    public void shouldBuildTwoUnionSelectBuilders() {
+        SelectBuilder selectBuilder = new SelectBuilder();
+        SelectBuilder selectBuilder2 = new SelectBuilder();
+
+        selectBuilder
+                .select("{u}id", "{u}name")
+                .from("users{u}");
+
+        selectBuilder2
+                .select("{c}identifier", "{c}first_name")
+                .from("clients{c}");
+
+        selectBuilder.union(selectBuilder2);
+
+        String expected = "( SELECT u.id AS u_id , u.name AS u_name FROM users u ) UNION ( SELECT c.identifier AS c_identifier , c.first_name AS c_first_name FROM clients c )";
+
+        assertEquals(expected, selectBuilder.build());
+    }
 }

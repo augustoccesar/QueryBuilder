@@ -4,6 +4,7 @@ import br.com.augustoccesar.querybuilder.constants.CommonStrings;
 import br.com.augustoccesar.querybuilder.query.Comparison;
 import br.com.augustoccesar.querybuilder.query.Join;
 import br.com.augustoccesar.querybuilder.query.Order;
+import br.com.augustoccesar.querybuilder.query.Union;
 import br.com.augustoccesar.querybuilder.query.conditions.ConditionSignature;
 import br.com.augustoccesar.querybuilder.query.trackers.*;
 
@@ -23,6 +24,7 @@ public class SelectBuilder implements Buildable {
     private OrderTracker orderTracker = new OrderTracker();
     private LimitTracker limitTracker = new LimitTracker();
     private GroupByTracker groupByTracker = new GroupByTracker();
+    private UnionTracker unionTracker = new UnionTracker();
 
     /**
      * Constructors
@@ -104,11 +106,21 @@ public class SelectBuilder implements Buildable {
         return this;
     }
 
+    public SelectBuilder union(SelectBuilder selectBuilder) {
+        unionTracker.addUnion(selectBuilder);
+        return this;
+    }
+
+    public SelectBuilder unionAll(SelectBuilder selectBuilder) {
+        unionTracker.addUnionAll(selectBuilder);
+        return this;
+    }
+
     @Override
     public String build() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (this.alias != null) {
+        if (this.alias != null || this.unionTracker.shouldBuild()) {
             stringBuilder.append(CommonStrings.OPEN_PARENTHESES);
         }
 
@@ -149,6 +161,13 @@ public class SelectBuilder implements Buildable {
         if (this.alias != null) {
             stringBuilder.append(CommonStrings.CLOSE_PARENTHESES);
             stringBuilder.append(CommonStrings.AS).append(this.alias);
+        }
+
+        // Build Unions
+
+        if (this.unionTracker.shouldBuild()) {
+            stringBuilder.append(CommonStrings.CLOSE_PARENTHESES);
+            stringBuilder.append(this.unionTracker.build());
         }
 
         // Remove unnecessary spaces
