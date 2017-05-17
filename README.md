@@ -5,6 +5,8 @@
 [![GitHub version](https://badge.fury.io/gh/augustoccesar%2FQueryBuilder.svg)](https://badge.fury.io/gh/augustoccesar%2FQueryBuilder)
 [![Join the chat at https://gitter.im/QueryBuilder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QueryBuilder/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
+Java and Kotlin helper to build queries.
+
 Guide
 -----
 
