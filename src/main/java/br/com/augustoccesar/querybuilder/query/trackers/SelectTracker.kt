@@ -27,6 +27,8 @@ class SelectTracker : Buildable {
                 this.selectBuilders.add(item)
             if (item is Aggregation)
                 this.aggregations.add(item)
+            if (item is MutableList<*>)
+                item.forEach { this.columns.add(Column.fromMarkdown(it.toString())) }
         }
 
         return this

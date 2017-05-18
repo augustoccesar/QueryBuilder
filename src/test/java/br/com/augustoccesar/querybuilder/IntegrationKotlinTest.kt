@@ -1,10 +1,7 @@
 package br.com.augustoccesar.querybuilder
 
 import br.com.augustoccesar.querybuilder.builders.SelectBuilder
-import br.com.augustoccesar.querybuilder.query.Aggregation
-import br.com.augustoccesar.querybuilder.query.Comparison
-import br.com.augustoccesar.querybuilder.query.Join
-import br.com.augustoccesar.querybuilder.query.Order
+import br.com.augustoccesar.querybuilder.query.*
 import br.com.augustoccesar.querybuilder.query.conditions.Condition
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -350,6 +347,19 @@ class IntegrationKotlinTest {
         selectBuilder.union(selectBuilder2)
 
         val expected = "( SELECT u.id AS u_id , u.name AS u_name FROM users u ) UNION ( SELECT c.identifier AS c_identifier , c.first_name AS c_first_name FROM clients c )"
+
+        assertEquals(expected, selectBuilder.build())
+    }
+
+    @Test
+    fun shouldBuildWithMultiColumns() {
+        val selectBuilder = SelectBuilder()
+
+        selectBuilder
+                .select(Column.multiColumns("u", "id", "name{custom_alias}", "gender"))
+                .from("users{u}")
+
+        val expected = "SELECT u.id AS u_id , u.name AS custom_alias , u.gender AS u_gender FROM users u"
 
         assertEquals(expected, selectBuilder.build())
     }
