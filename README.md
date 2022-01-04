@@ -1,7 +1,7 @@
 # QueryBuilder 
 [![Build Status](https://travis-ci.org/augustoccesar/QueryBuilder.svg?branch=master)](https://travis-ci.org/augustoccesar/QueryBuilder) 
 [![Coverage Status](https://coveralls.io/repos/github/augustoccesar/QueryBuilder/badge.svg?branch=master)](https://coveralls.io/github/augustoccesar/QueryBuilder?branch=master) 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f203baba091846e3922fabf893f569e6?branch=master)](https://www.codacy.com/app/augustoccesar/QueryBuilder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=augustoccesar/QueryBuilder&amp;utm_campaign=Badge_Grade) 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ffb9a58f75a64dfb9abfcb1f556489e4)](https://www.codacy.com/gh/augustoccesar/QueryBuilder/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=augustoccesar/QueryBuilder&amp;utm_campaign=Badge_Grade) 
 [![GitHub version](https://badge.fury.io/gh/augustoccesar%2FQueryBuilder.svg)](https://badge.fury.io/gh/augustoccesar%2FQueryBuilder)
 [![JitPack version](https://jitpack.io/v/augustoccesar/QueryBuilder.svg)](https://jitpack.io/#augustoccesar/QueryBuilder)
 [![Join the chat at https://gitter.im/QueryBuilder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QueryBuilder/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
