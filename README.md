@@ -1,7 +1,7 @@
 # QueryBuilder
 
 [![Gradle Build and Test](https://github.com/augustoccesar/QueryBuilder/actions/workflows/gradle-build-and-test.yml/badge.svg?branch=master)](https://github.com/augustoccesar/QueryBuilder/actions/workflows/gradle-build-and-test.yml)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/augustoccesar/QueryBuilder)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/augustoccesar/QueryBuilder)](https://github.com/augustoccesar/QueryBuilder/packages/1972514)
 
 
 Guide
