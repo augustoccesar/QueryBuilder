@@ -1,8 +1,10 @@
-.gradle
 .idea
+.vscode
+
+.gradle
 *.iml
 build
 out
 gen
 target
-/src/main/java/br/com/augustoccesar/querybuilder/examples
+bin
