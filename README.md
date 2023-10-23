@@ -197,35 +197,7 @@ Installation
 ------------
 
 #### Gradle
-
-```gradle
-repositories {
-    (...)
-    maven { url 'https://jitpack.io' }
-}
-```
-
-```gradle
-dependencies {
-    compile 'com.github.augustoccesar:QueryBuilder:$version'
-}
-```
+TODO
 
 #### Maven
-
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-```
-
-```xml
-<dependency>
-    <groupId>com.github.augustoccesar</groupId>
-    <artifactId>QueryBuilder</artifactId>
-    <version>$version</version>
-</dependency>
-```
+TODO
