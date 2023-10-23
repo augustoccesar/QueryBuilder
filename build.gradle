@@ -1,6 +1,9 @@
 apply plugin: "java"
 apply plugin: "maven-publish"
 
+group = group
+version = version
+
 repositories {
     mavenCentral()
 }
@@ -14,6 +17,11 @@ test {
 }
 
 publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
     repositories {
         maven {
             name = "GitHubPackages"
