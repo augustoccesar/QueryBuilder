@@ -3,6 +3,7 @@ apply plugin: "maven-publish"
 
 group = group
 version = version
+sourceCompatibility = "19"
 
 repositories {
     mavenCentral()
