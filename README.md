@@ -196,12 +196,3 @@ Aggregation.sum("{u}score")     // Generates 'SUM (u.score) AS sum_u_score'
 ```
 All `Aggregation` builders can have and extra parameter that is used to sed a custom alias
 to the aggregation
-
-Installation
-------------
-
-#### Gradle
-TODO
-
-#### Maven
-TODO
